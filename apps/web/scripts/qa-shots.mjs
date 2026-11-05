@@ -20,6 +20,7 @@ const widths = [375, 768, 1280, 1920];
 const routes = [
   { name: "home", path: "/" },
   { name: "design", path: "/design" },
+  { name: "transitions", path: "/transitions" },
 ];
 
 let server = null;
@@ -102,6 +103,28 @@ async function main() {
 
     // Проверка rewrite `/_design` → `/design` (одна ширина).
     await shot(browser, "/_design", "design-alias", 1280, 960);
+
+    // Шейдерный переход в середине (класс B): кликаем T9 и снимаем кадр.
+    {
+      const page = await browser.newPage({
+        viewport: { width: 1280, height: 960 },
+        deviceScaleFactor: 1,
+      });
+      await page.goto(`${baseUrl}/transitions`, { waitUntil: "networkidle" });
+      await page.evaluate(() => document.fonts.ready);
+      await page.addStyleTag({
+        content: "nextjs-portal { display: none !important; }",
+      });
+      await page.waitForTimeout(800);
+      await page.getByRole("button", { name: /T9/ }).click();
+      await page.waitForTimeout(280);
+      await page.screenshot({
+        path: resolve(outDir, "transition-t9-cover-1280.png"),
+        fullPage: false,
+      });
+      await page.close();
+      console.log("  + transition-t9-cover-1280.png");
+    }
 
     // Курсор на интерактиве (критерий 5).
     {
