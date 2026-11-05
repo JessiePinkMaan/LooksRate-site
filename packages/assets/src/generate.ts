@@ -5,9 +5,11 @@
  *
  * Куда кладём: apps/web/public/assets (см. DECISIONS D-3).
  */
-import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+
+import sharp from "sharp";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const outDir = resolve(here, "../../../apps/web/public/assets");
@@ -257,7 +259,56 @@ function makeClick(seconds: number, sampleRate: number): Float32Array {
 
 // ---------------------------------------------------------------------------
 
-function main(): void {
+/**
+ * Подготовка фото яблока от владельца: обрезка чёрных полей, прозрачный фон
+ * (по яркости), WebP/PNG + версия с чёрным фоном.
+ */
+async function prepareApplePhoto(): Promise<void> {
+  const source = resolve(here, "../../../assets/apple.jpg");
+  if (!existsSync(source)) {
+    console.log("  · assets/apple.jpg не найден — фото яблока пропущено");
+    return;
+  }
+
+  const { data, info } = await sharp(source)
+    .trim({ threshold: 12 })
+    .ensureAlpha()
+    .raw()
+    .toBuffer({ resolveWithObject: true });
+
+  const pixels = Buffer.from(data);
+  for (let i = 0; i < pixels.length; i += 4) {
+    const r = pixels[i] ?? 0;
+    const g = pixels[i + 1] ?? 0;
+    const b = pixels[i + 2] ?? 0;
+    const luminance = Math.max(r, g, b) / 255;
+    const alpha = Math.min(1, Math.max(0, (luminance - 0.02) / 0.1));
+    pixels[i + 3] = Math.round(alpha * 255);
+  }
+
+  const rgba = sharp(pixels, {
+    raw: { width: info.width, height: info.height, channels: 4 },
+  });
+
+  await rgba
+    .clone()
+    .webp({ quality: 88, alphaQuality: 100 })
+    .toFile(resolve(outDir, "apple-photo.webp"));
+  await rgba
+    .clone()
+    .png({ compressionLevel: 9 })
+    .toFile(resolve(outDir, "apple-photo.png"));
+  await sharp(source)
+    .trim({ threshold: 12 })
+    .webp({ quality: 88 })
+    .toFile(resolve(outDir, "apple-photo-black.webp"));
+
+  console.log(`  + apple-photo.webp (${info.width}×${info.height})`);
+  console.log("  + apple-photo.png");
+  console.log("  + apple-photo-black.webp");
+}
+
+async function main(): Promise<void> {
   mkdirSync(outDir, { recursive: true });
   mkdirSync(audioDir, { recursive: true });
   console.log(`Генерация ассетов в ${outDir}`);
@@ -283,9 +334,14 @@ function main(): void {
   writeWav("drone.wav", makeDrone(1.6, 22050));
   writeWav("click.wav", makeClick(0.12, 22050));
 
+  await prepareApplePhoto();
+
   console.log(
     "Готово. Это плейсхолдеры. Реальные ассеты — см. ASSETS_TODO.md (ASSET_NEEDED).",
   );
 }
 
-main();
+main().catch((error: unknown) => {
+  console.error("Генерация ассетов упала:", error);
+  process.exitCode = 1;
+});
