@@ -351,10 +351,41 @@ async function prepareHands(): Promise<void> {
     const source = resolve(here, "../../../assets", hand.file);
     if (!existsSync(source)) continue;
 
-    await sharp(source)
+    const { data, info } = await sharp(source)
       .trim({ threshold: 12 })
       .resize(720, 720, { fit: "inside", withoutEnlargement: true })
-      .webp({ quality: 84 })
+      .ensureAlpha()
+      .raw()
+      .toBuffer({ resolveWithObject: true });
+
+    const pixels = Buffer.from(data);
+    for (let i = 0; i < pixels.length; i += 4) {
+      const r = pixels[i] ?? 0;
+      const g = pixels[i + 1] ?? 0;
+      const b = pixels[i + 2] ?? 0;
+      const max = Math.max(r, g, b);
+      const min = Math.min(r, g, b);
+      const saturation = max === 0 ? 0 : (max - min) / max;
+      const luminance = max / 255;
+      const alpha = Math.max(
+        0,
+        Math.min(
+          1,
+          (saturation - 0.05) * 4 + (0.7 - luminance) * 1.2,
+        ),
+      );
+
+      // Монохром «костяного» оттенка — силуэт руки без фона.
+      pixels[i] = 233;
+      pixels[i + 1] = 228;
+      pixels[i + 2] = 218;
+      pixels[i + 3] = Math.round(alpha * 255);
+    }
+
+    await sharp(pixels, {
+      raw: { width: info.width, height: info.height, channels: 4 },
+    })
+      .webp({ quality: 86, alphaQuality: 100 })
       .toFile(resolve(outDir, hand.out));
 
     console.log(`  + ${hand.out}`);
