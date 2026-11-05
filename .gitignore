@@ -27,6 +27,10 @@ coverage/
 test-results/
 playwright-report/
 
+# backups
+backups/
+*.dump
+
 # turbo
 .turbo/
 

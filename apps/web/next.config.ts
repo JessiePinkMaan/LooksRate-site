@@ -13,6 +13,7 @@ if (existsSync(rootEnvFile)) {
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
+  output: "standalone",
   devIndicators: false,
   transpilePackages: ["@loxrate/config", "@loxrate/ui"],
   async rewrites() {

@@ -1,0 +1,101 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-loxrate}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-loxrate}
+      POSTGRES_DB: ${POSTGRES_DB:-loxrate}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-loxrate} -d ${POSTGRES_DB:-loxrate}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  minio:
+    image: minio/minio:latest
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${S3_ACCESS_KEY_ID:-loxrate}
+      MINIO_ROOT_PASSWORD: ${S3_SECRET_ACCESS_KEY:-loxrate-secret}
+    volumes:
+      - miniodata:/data
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+    ports:
+      - "3000:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  worker:
+    build:
+      context: .
+      dockerfile: apps/worker/Dockerfile
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      NODE_ENV: production
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  # Одноразовые утилиты: миграции и сид (профиль tools).
+  migrate:
+    profiles: ["tools"]
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+      target: builder
+    env_file: .env
+    command: ["pnpm", "--filter", "@loxrate/db", "exec", "prisma", "migrate", "deploy"]
+
+  seed:
+    profiles: ["tools"]
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+      target: builder
+    env_file: .env
+    command: ["pnpm", "--filter", "@loxrate/db", "seed"]
+
+volumes:
+  pgdata:
+  redisdata:
+  miniodata:
