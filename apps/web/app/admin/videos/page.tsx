@@ -18,7 +18,10 @@ export default async function AdminVideosPage({
 }) {
   const { error } = await searchParams;
   const videos = await prisma.video.findMany({
-    include: { accessRules: true },
+    include: {
+      accessRules: true,
+      assets: { where: { kind: "ORIGINAL" } },
+    },
     orderBy: { createdAt: "desc" },
   });
 
@@ -116,9 +119,30 @@ export default async function AdminVideosPage({
                   /{video.slug} · {video.status} ·{" "}
                   {video.publishAt ? "опубликовано" : "черновик"} ·{" "}
                   {video.accessRules.map((rule) => rule.type).join(", ") ||
-                    "PUBLIC"}
+                    "PUBLIC"}{" "}
+                  · {video.assets.length > 0 ? "файл загружен" : "файла нет"}
                 </p>
               </div>
+              <form
+                action={`/api/admin/videos/${video.id}/file`}
+                method="post"
+                encType="multipart/form-data"
+                className="flex flex-wrap items-center gap-2"
+              >
+                <input
+                  type="file"
+                  name="file"
+                  accept="video/mp4,video/webm,video/quicktime"
+                  required
+                  className="max-w-[13rem] text-[0.65rem] text-steel"
+                />
+                <button
+                  type="submit"
+                  className="border border-graphite px-3 py-1.5 font-mono text-[0.55rem] uppercase tracking-[0.2em] text-steel transition-colors hover:text-ash"
+                >
+                  Загрузить
+                </button>
+              </form>
               <form action={toggleVideoAction}>
                 <input type="hidden" name="id" value={video.id} />
                 <button

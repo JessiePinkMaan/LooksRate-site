@@ -64,6 +64,12 @@ export default async function VideoPage({ params }: VideoPageProps) {
       })
     : [];
 
+  const originalAsset = dbVideo
+    ? await prisma.videoAsset.findFirst({
+        where: { videoId: dbVideo.id, kind: "ORIGINAL" },
+      })
+    : null;
+
   let allowed = false;
   let reason = "";
   let title = "";
@@ -107,23 +113,46 @@ export default async function VideoPage({ params }: VideoPageProps) {
 
       {allowed ? (
         <section className="mt-6 border border-graphite bg-concrete">
-          <div className="relative flex aspect-video items-center justify-center overflow-hidden bg-[linear-gradient(135deg,#1c1c20,#0a0a0b)]">
-            <span className="absolute inset-0 bg-[radial-gradient(circle_at_40%_30%,rgba(179,18,27,0.18),transparent_60%)]" />
-            <div className="relative text-center">
-              <img
-                src="/assets/apple.svg"
-                alt=""
-                width={48}
-                height={48}
-                className="mx-auto opacity-80"
-              />
-              <p className="mt-3 font-mono text-[0.6rem] uppercase tracking-[0.25em] text-steel">
-                Плеер подключается на Фазе 8
-              </p>
-              <p className="mt-1 text-xs text-steel">
-                Видео-файл ещё не загружен · ASSET_NEEDED
-              </p>
-            </div>
+          <div className="relative aspect-video overflow-hidden bg-black">
+            {originalAsset && dbVideo ? (
+              <video
+                controls
+                preload="metadata"
+                className="h-full w-full"
+                src={`/api/videos/${dbVideo.id}/stream`}
+                aria-label={title}
+              >
+                <track
+                  kind="captions"
+                  src="/assets/captions.vtt"
+                  srcLang="ru"
+                  label="Русский"
+                  default
+                />
+              </video>
+            ) : (
+              <div className="flex h-full w-full flex-col items-center justify-center bg-[linear-gradient(135deg,#1c1c20,#0a0a0b)]">
+                <span
+                  aria-hidden
+                  className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_40%_30%,rgba(179,18,27,0.18),transparent_60%)]"
+                />
+                <div className="relative text-center">
+                  <img
+                    src="/assets/apple.svg"
+                    alt=""
+                    width={48}
+                    height={48}
+                    className="mx-auto opacity-80"
+                  />
+                  <p className="mt-3 font-mono text-[0.6rem] uppercase tracking-[0.25em] text-steel">
+                    Файл ещё не загружен
+                  </p>
+                  <p className="mt-1 text-xs text-steel">
+                    Админ может загрузить видео в /admin/videos
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="p-6">

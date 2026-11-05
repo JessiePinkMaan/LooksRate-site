@@ -1,5 +1,7 @@
 "use server";
 
+import { unlink } from "node:fs/promises";
+
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
@@ -8,6 +10,7 @@ import type { Role } from "@loxrate/db";
 
 import { requireStaff } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { resolveStorageFile } from "@/lib/storage";
 import { awardXp } from "@/lib/xp";
 
 const createVideoSchema = z.object({
@@ -105,6 +108,14 @@ export async function deleteVideoAction(formData: FormData): Promise<void> {
   const staff = await requireStaff();
   const id = String(formData.get("id") ?? "");
   if (!id) redirect("/admin/videos");
+
+  const originalAsset = await prisma.videoAsset.findFirst({
+    where: { videoId: id, kind: "ORIGINAL" },
+  });
+  if (originalAsset) {
+    const filePath = resolveStorageFile(originalAsset.storageKey);
+    if (filePath) await unlink(filePath).catch(() => {});
+  }
 
   await prisma.video.delete({ where: { id } });
   await prisma.auditLog.create({

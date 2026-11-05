@@ -31,6 +31,9 @@ playwright-report/
 backups/
 *.dump
 
+# uploaded media
+storage/
+
 # turbo
 .turbo/
 
