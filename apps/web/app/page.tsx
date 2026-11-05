@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { RivetedCard } from "@loxrate/ui";
 
 import { ThresholdLoader } from "@/components/landing/ThresholdLoader";
+import { HeroApple } from "@/components/landing/HeroApple";
 import { TLink } from "@/components/motion/TLink";
 import { codex, slogans } from "@/lib/content";
 
@@ -76,13 +77,7 @@ export default function HomePage() {
             LoxRate · луксмаксинг и ментальность
           </p>
 
-          <img
-            src="/assets/apple-photo.webp"
-            alt="Яблоко LoxRate"
-            width={132}
-            height={137}
-            className="apple-float relative mt-8 drop-shadow-[0_0_60px_rgba(179,18,27,0.35)]"
-          />
+          <HeroApple />
 
           <h1 className="relative mt-6 font-heading text-[clamp(3rem,14vw,12rem)] uppercase leading-[0.82] tracking-[0.01em]">
             <span className="block">{heroFirst}</span>

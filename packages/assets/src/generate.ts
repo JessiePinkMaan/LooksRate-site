@@ -341,55 +341,72 @@ async function prepareOg(): Promise<void> {
   console.log("  + og.png (1200×630, public root)");
 }
 
+async function renderHand(
+  sourceFile: string,
+  outFile: string,
+  rotateDeg: number,
+): Promise<void> {
+  const source = resolve(here, "../../../assets", sourceFile);
+  if (!existsSync(source)) return;
+
+  let pipeline = sharp(source)
+    .trim({ threshold: 12 })
+    .resize(720, 720, { fit: "inside", withoutEnlargement: true });
+
+  if (rotateDeg !== 0) {
+    pipeline = pipeline.rotate(rotateDeg, {
+      background: { r: 0, g: 0, b: 0, alpha: 0 },
+    });
+  }
+
+  await pipeline.webp({ quality: 86 }).toFile(resolve(outDir, outFile));
+  console.log(`  + ${outFile}`);
+}
+
 async function prepareHands(): Promise<void> {
-  const hands = [
-    { file: "рука1.jpg", out: "hand-a.webp" },
-    { file: "рука2.jpg", out: "hand-b.webp" },
+  // Вертикальные — для сцены «Основатели».
+  await renderHand("рука1.jpg", "hand-a.webp", 0);
+  await renderHand("рука2.jpg", "hand-b.webp", 0);
+  // Горизонтальные — для hero: тянутся к яблоку слева и справа.
+  await renderHand("рука2.jpg", "hand-left.webp", 90);
+  await renderHand("рука1.jpg", "hand-right.webp", 90);
+}
+
+async function prepareBittenApple(): Promise<void> {
+  const source = resolve(outDir, "apple-photo.png");
+  if (!existsSync(source)) return;
+
+  const { data, info } = await sharp(source)
+    .ensureAlpha()
+    .raw()
+    .toBuffer({ resolveWithObject: true });
+
+  const pixels = Buffer.from(data);
+  const { width, height } = info;
+  const bites = [
+    { x: width * 0.86, y: height * 0.42, r: width * 0.27 },
+    { x: width * 0.79, y: height * 0.27, r: width * 0.17 },
+    { x: width * 0.79, y: height * 0.58, r: width * 0.17 },
   ];
 
-  for (const hand of hands) {
-    const source = resolve(here, "../../../assets", hand.file);
-    if (!existsSync(source)) continue;
-
-    const { data, info } = await sharp(source)
-      .trim({ threshold: 12 })
-      .resize(720, 720, { fit: "inside", withoutEnlargement: true })
-      .ensureAlpha()
-      .raw()
-      .toBuffer({ resolveWithObject: true });
-
-    const pixels = Buffer.from(data);
-    for (let i = 0; i < pixels.length; i += 4) {
-      const r = pixels[i] ?? 0;
-      const g = pixels[i + 1] ?? 0;
-      const b = pixels[i + 2] ?? 0;
-      const max = Math.max(r, g, b);
-      const min = Math.min(r, g, b);
-      const saturation = max === 0 ? 0 : (max - min) / max;
-      const luminance = max / 255;
-      const alpha = Math.max(
-        0,
-        Math.min(
-          1,
-          (saturation - 0.05) * 4 + (0.7 - luminance) * 1.2,
-        ),
+  for (let y = 0; y < height; y += 1) {
+    for (let x = 0; x < width; x += 1) {
+      const inside = bites.some(
+        (bite) => (x - bite.x) ** 2 + (y - bite.y) ** 2 < bite.r ** 2,
       );
-
-      // Монохром «костяного» оттенка — силуэт руки без фона.
-      pixels[i] = 233;
-      pixels[i + 1] = 228;
-      pixels[i + 2] = 218;
-      pixels[i + 3] = Math.round(alpha * 255);
+      if (inside) {
+        pixels[(y * width + x) * 4 + 3] = 0;
+      }
     }
-
-    await sharp(pixels, {
-      raw: { width: info.width, height: info.height, channels: 4 },
-    })
-      .webp({ quality: 86, alphaQuality: 100 })
-      .toFile(resolve(outDir, hand.out));
-
-    console.log(`  + ${hand.out}`);
   }
+
+  await sharp(pixels, {
+    raw: { width, height, channels: 4 },
+  })
+    .webp({ quality: 88, alphaQuality: 100 })
+    .toFile(resolve(outDir, "apple-bitten.webp"));
+
+  console.log("  + apple-bitten.webp");
 }
 
 async function main(): Promise<void> {
@@ -419,6 +436,7 @@ async function main(): Promise<void> {
   writeWav("click.wav", makeClick(0.12, 22050));
 
   await prepareApplePhoto();
+  await prepareBittenApple();
   await prepareOg();
   await prepareHands();
 
