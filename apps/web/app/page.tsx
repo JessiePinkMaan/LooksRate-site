@@ -10,6 +10,14 @@ export default function HomePage() {
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_38%,rgba(201,162,39,0.10),transparent_42%)]"
       />
 
+      <img
+        src="/assets/apple.svg"
+        alt="Золотое яблоко LoxRate"
+        width={84}
+        height={84}
+        className="relative drop-shadow-[0_0_44px_rgba(201,162,39,0.28)]"
+      />
+
       <p className="relative font-mono text-[0.7rem] uppercase tracking-[0.55em] text-steel">
         LoxRate
       </p>
