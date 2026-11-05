@@ -1,6 +1,6 @@
 /**
- * QA-скриншоты: 4 ширины + reduced-motion, в qa/shots/phase-N/.
- * Самодостаточно: если сервер не запущен, поднимает `next start`.
+ * QA-скриншоты по фазам: ключевые страницы × ширины + спец-кадры.
+ * Если сервер не запущен — поднимает `next dev`.
  */
 import { spawn, spawnSync } from "node:child_process";
 import { mkdir } from "node:fs/promises";
@@ -16,11 +16,35 @@ const phase = process.env.QA_PHASE ?? "phase-1";
 const outDir = resolve(repoRoot, "qa", "shots", phase);
 const baseUrl = process.env.QA_BASE_URL ?? "http://localhost:3000";
 
-const widths = [375, 768, 1280, 1920];
-const routes = [
-  { name: "home", path: "/" },
-  { name: "design", path: "/design" },
-  { name: "transitions", path: "/transitions" },
+const bypassLoader = () => {
+  try {
+    window.sessionStorage.setItem("loxrate:entered", "1");
+  } catch {
+    /* noop */
+  }
+};
+
+const effectsOff = () => {
+  try {
+    window.sessionStorage.setItem("loxrate:entered", "1");
+    window.localStorage.setItem(
+      "loxrate:prefs",
+      JSON.stringify({ effects: false, sound: false }),
+    );
+  } catch {
+    /* noop */
+  }
+};
+
+const targets = [
+  { name: "home", path: "/", widths: [375, 768, 1280, 1920], init: effectsOff },
+  { name: "manifest", path: "/manifest", widths: [375, 1280] },
+  { name: "ranks", path: "/ranks", widths: [375, 1280] },
+  { name: "access", path: "/access", widths: [375, 1280] },
+  { name: "lore", path: "/lore", widths: [375, 1280] },
+  { name: "legal-rules", path: "/legal/rules", widths: [1280] },
+  { name: "design", path: "/design", widths: [1280] },
+  { name: "transitions", path: "/transitions", widths: [1280] },
 ];
 
 let server = null;
@@ -63,28 +87,40 @@ function stopServer() {
   server = null;
 }
 
-async function shot(browser, path, name, width, height, options = {}) {
+async function preparePage(browser, width, height, options = {}) {
   const page = await browser.newPage({
     viewport: { width, height },
     deviceScaleFactor: 1,
-    ...options,
+    reducedMotion: options.reducedMotion ?? "no-preference",
   });
-  await page.goto(`${baseUrl}${path}`, {
-    waitUntil: "networkidle",
-    timeout: 60_000,
-  });
-  // Дать шрифтам устояться и спрятать dev-оверлей Next.
+  if (options.init) {
+    await page.addInitScript(options.init);
+  }
+  return page;
+}
+
+async function waitForPage(page) {
   await page.evaluate(() => document.fonts.ready);
   await page.addStyleTag({
     content: "nextjs-portal { display: none !important; }",
   });
+  await page.mouse.move(1, 1);
   await page.waitForTimeout(500);
+}
+
+async function shot(browser, target, width, height, options = {}) {
+  const page = await preparePage(browser, width, height, options);
+  await page.goto(`${baseUrl}${target.path}`, {
+    waitUntil: "networkidle",
+    timeout: 60_000,
+  });
+  await waitForPage(page);
   await page.screenshot({
-    path: resolve(outDir, `${name}-${width}.png`),
+    path: resolve(outDir, `${target.name}-${width}.png`),
     fullPage: true,
   });
   await page.close();
-  console.log(`  + ${name}-${width}.png`);
+  console.log(`  + ${target.name}-${width}.png`);
 }
 
 async function main() {
@@ -94,28 +130,60 @@ async function main() {
   const browser = await chromium.launch();
 
   try {
-    for (const route of routes) {
-      for (const width of widths) {
-        const height = Math.round(width * 0.75);
-        await shot(browser, route.path, route.name, width, height);
+    for (const target of targets) {
+      for (const width of target.widths) {
+        await shot(browser, target, width, Math.round(width * 0.75), {
+          init: target.init,
+        });
       }
     }
 
-    // Проверка rewrite `/_design` → `/design` (одна ширина).
-    await shot(browser, "/_design", "design-alias", 1280, 960);
-
-    // Шейдерный переход в середине (класс B): кликаем T9 и снимаем кадр.
+    // Hero с включёнными эффектами (для «вайба»).
     {
-      const page = await browser.newPage({
-        viewport: { width: 1280, height: 960 },
-        deviceScaleFactor: 1,
+      const page = await preparePage(browser, 1280, 960, {
+        init: bypassLoader,
       });
-      await page.goto(`${baseUrl}/transitions`, { waitUntil: "networkidle" });
+      await page.goto(`${baseUrl}/`, { waitUntil: "networkidle" });
+      await waitForPage(page);
+      await page.screenshot({
+        path: resolve(outDir, "home-hero-1280.png"),
+        fullPage: false,
+      });
+      await page.close();
+      console.log("  + home-hero-1280.png");
+    }
+
+    // Отдельно — «Порог» (без обхода лоадера).
+    {
+      const page = await preparePage(browser, 1280, 960, {
+        init: () => {
+          try {
+            window.sessionStorage.removeItem("loxrate:entered");
+          } catch {
+            /* noop */
+          }
+        },
+      });
+      await page.goto(`${baseUrl}/`, { waitUntil: "networkidle" });
       await page.evaluate(() => document.fonts.ready);
       await page.addStyleTag({
         content: "nextjs-portal { display: none !important; }",
       });
-      await page.waitForTimeout(800);
+      await page.waitForTimeout(1100);
+      await page.screenshot({
+        path: resolve(outDir, "threshold-1280.png"),
+        fullPage: false,
+      });
+      await page.close();
+      console.log("  + threshold-1280.png");
+    }
+
+    // Шейдерный переход в середине (T9).
+    {
+      const page = await preparePage(browser, 1280, 960);
+      await page.goto(`${baseUrl}/transitions`, { waitUntil: "networkidle" });
+      await waitForPage(page);
+      await page.waitForTimeout(600);
       await page.getByRole("button", { name: /T9/ }).click();
       await page.waitForTimeout(280);
       await page.screenshot({
@@ -126,17 +194,11 @@ async function main() {
       console.log("  + transition-t9-cover-1280.png");
     }
 
-    // Курсор на интерактиве (критерий 5).
+    // Курсор на интерактиве.
     {
-      const page = await browser.newPage({
-        viewport: { width: 1280, height: 960 },
-        deviceScaleFactor: 1,
-      });
+      const page = await preparePage(browser, 1280, 960);
       await page.goto(`${baseUrl}/design`, { waitUntil: "networkidle" });
-      await page.evaluate(() => document.fonts.ready);
-      await page.addStyleTag({
-        content: "nextjs-portal { display: none !important; }",
-      });
+      await waitForPage(page);
       await page
         .getByRole("button", { name: "Удерживай, чтобы войти" })
         .hover();
@@ -149,10 +211,20 @@ async function main() {
       console.log("  + design-cursor-1280.png");
     }
 
-    // Reduced-motion проход.
-    await shot(browser, "/design", "design-reduced", 1280, 960, {
-      reducedMotion: "reduce",
-    });
+    // Reduced-motion.
+    {
+      const page = await preparePage(browser, 1280, 960, {
+        reducedMotion: "reduce",
+      });
+      await page.goto(`${baseUrl}/design`, { waitUntil: "networkidle" });
+      await waitForPage(page);
+      await page.screenshot({
+        path: resolve(outDir, "design-reduced-1280.png"),
+        fullPage: true,
+      });
+      await page.close();
+      console.log("  + design-reduced-1280.png");
+    }
 
     console.log(`[qa:shots] Готово: ${outDir}`);
   } finally {
