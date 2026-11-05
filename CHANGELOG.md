@@ -4,6 +4,13 @@
 
 ## [Unreleased]
 
+### Hero apple effect — готово к приёмке
+- Hover/focus на яблоко: золотой свет, две руки выезжают с боков, яблоко надкушено.
+- Руки: `рука1/2` → горизонтальные `hand-left/right` (поворот/обрезка).
+- Надкушенное яблоко `apple-bitten.webp` (sharp).
+- Touch: клик; reduced-motion/effects-off — без анимаций.
+- a11y 0 на 13 страницах.
+
 ### Founders hands — готово к приёмке
 - Добавлены и обрезаны руки из «Сотворения Адама» (`assets` → `hand-a/b.webp`).
 - Призрачный слой в интро `/founders` (invert/grayscale/screen).
