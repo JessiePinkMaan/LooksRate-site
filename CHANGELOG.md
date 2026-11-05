@@ -4,6 +4,18 @@
 
 ## [Unreleased]
 
+### Phase 3 — Лендинг и статические страницы — готово к приёмке
+- Комнаты 00–06 и 08: «Порог» (18+ + hold), Hero, Манифест + Кодекс,
+  «Три двери», Лор-превью, коридор рангов, Vault-превью, Footer.
+- Статические: `/manifest`, `/ranks`, `/access` («Скоро»), `/lore`,
+  `/legal/rules|privacy|terms|18plus`.
+- Скролл-переходы film/fold/tunnel/chains/iris; роут-переходы через `TLink`.
+- Контент из `content/ru/*.json` (manifest, codex, glossary, ranks, tiers, faq,
+  feed, vault-preview, legal).
+- Яблоко владельца: обрезка + прозрачный фон (`sharp`) → `apple-photo.webp/png/black`.
+- Фикс: занавес больше не висит поверх страниц в покое.
+- QA: скриншоты лендинга/страниц, «Порог», hero, reduced-motion.
+
 ### Phase 2 — Движок движения — готово к приёмке
 - Lenis + GSAP ScrollTrigger (ленивый импорт), отключение при reduced-motion/эффектах.
 - `TransitionProvider`: cover → push → ready → scrollTo(0) → reveal, watchdog 4 с,
