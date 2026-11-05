@@ -226,6 +226,56 @@ async function main() {
       console.log("  + design-reduced-1280.png");
     }
 
+    // Флагманская сцена «Основатели»: старт, середина (цитата), досье.
+    {
+      const page = await preparePage(browser, 1280, 960, {
+        init: bypassLoader,
+      });
+      await page.goto(`${baseUrl}/`, { waitUntil: "networkidle" });
+      await waitForPage(page);
+
+      const scrollFounders = async (ratio) => {
+        await page.evaluate((value) => {
+          const element = document.getElementById("founders");
+          if (!element) return;
+          const total = element.offsetHeight - window.innerHeight;
+          window.scrollTo(0, element.offsetTop + total * value);
+        }, ratio);
+        await page.waitForTimeout(900);
+      };
+
+      await scrollFounders(0.15);
+      await page.mouse.move(640, 760);
+      await page.waitForTimeout(500);
+      await page.screenshot({
+        path: resolve(outDir, "founders-start-1280.png"),
+        fullPage: false,
+      });
+
+      await scrollFounders(0.45);
+      await page.mouse.move(640, 760);
+      await page.waitForTimeout(500);
+      await page.screenshot({
+        path: resolve(outDir, "founders-mid-1280.png"),
+        fullPage: false,
+      });
+
+      await page
+        .getByRole("button", { name: /Открыть досье/ })
+        .first()
+        .click();
+      await page.waitForTimeout(400);
+      await page.screenshot({
+        path: resolve(outDir, "founders-dossier-1280.png"),
+        fullPage: false,
+      });
+
+      await page.close();
+      console.log(
+        "  + founders-start-1280.png / founders-mid-1280.png / founders-dossier-1280.png",
+      );
+    }
+
     console.log(`[qa:shots] Готово: ${outDir}`);
   } finally {
     await browser.close();
