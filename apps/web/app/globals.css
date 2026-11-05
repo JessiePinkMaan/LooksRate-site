@@ -94,6 +94,24 @@ body {
 }
 
 /* ---------------------------------------------------------------------------
+ * Роут-переходы: fallback-кроссфейд (reduced-motion / без WebGL)
+ * ------------------------------------------------------------------------- */
+
+.transition-fallback {
+  position: fixed;
+  inset: 0;
+  z-index: 199;
+  pointer-events: none;
+  background: var(--color-void);
+  opacity: 0;
+  transition: opacity 200ms ease;
+}
+
+html[data-transition="fallback"] .transition-fallback {
+  opacity: 1;
+}
+
+/* ---------------------------------------------------------------------------
  * Кастомный курсор (ТЗ §4.4)
  * ------------------------------------------------------------------------- */
 

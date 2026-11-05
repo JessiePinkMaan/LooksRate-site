@@ -18,6 +18,9 @@ import {
   SoundToggle,
 } from "@loxrate/ui";
 
+import { SmoothScroll } from "@/components/motion/SmoothScroll";
+import { TransitionProvider } from "@/components/motion/TransitionProvider";
+
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -41,16 +44,20 @@ export default function RootLayout({
   return (
     <html lang="ru">
       <body>
-        <EffectsProvider />
-        <CustomCursor />
-        <div className="concrete-overlay" aria-hidden />
-        <div className="grain-overlay" aria-hidden />
-        <div className="vignette-overlay" aria-hidden />
-        <div className="relative z-10">{children}</div>
-        <div className="fixed bottom-4 left-4 z-50 flex flex-wrap gap-2">
-          <EffectsToggle />
-          <SoundToggle />
-        </div>
+        <SmoothScroll>
+          <TransitionProvider>
+            <EffectsProvider />
+            <CustomCursor />
+            <div className="concrete-overlay" aria-hidden />
+            <div className="grain-overlay" aria-hidden />
+            <div className="vignette-overlay" aria-hidden />
+            <div className="relative z-10">{children}</div>
+            <div className="fixed bottom-4 left-4 z-50 flex flex-wrap gap-2">
+              <EffectsToggle />
+              <SoundToggle />
+            </div>
+          </TransitionProvider>
+        </SmoothScroll>
       </body>
     </html>
   );

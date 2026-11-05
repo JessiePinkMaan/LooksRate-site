@@ -18,7 +18,10 @@ const nextConfig: NextConfig = {
   async rewrites() {
     // Next не роутит папки с `_`, поэтому стенд живёт в /design,
     // а путь из ТЗ `/_design` ведёт на него.
-    return [{ source: "/_design", destination: "/design" }];
+    return [
+      { source: "/_design", destination: "/design" },
+      { source: "/_transitions", destination: "/transitions" },
+    ];
   },
 };
 
