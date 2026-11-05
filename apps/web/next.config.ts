@@ -15,7 +15,7 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   output: "standalone",
   devIndicators: false,
-  transpilePackages: ["@loxrate/config", "@loxrate/ui"],
+  transpilePackages: ["@loxrate/config", "@loxrate/ui", "@loxrate/db"],
   async rewrites() {
     // Next не роутит папки с `_`, поэтому стенд живёт в /design,
     // а путь из ТЗ `/_design` ведёт на него.

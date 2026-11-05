@@ -20,6 +20,7 @@ import {
 
 import { SmoothScroll } from "@/components/motion/SmoothScroll";
 import { TransitionProvider } from "@/components/motion/TransitionProvider";
+import { SiteHeader } from "@/components/site/SiteHeader";
 
 import "./globals.css";
 
@@ -104,7 +105,10 @@ export default function RootLayout({
             <div className="concrete-overlay" aria-hidden />
             <div className="grain-overlay" aria-hidden />
             <div className="vignette-overlay" aria-hidden />
-            <div className="relative z-10">{children}</div>
+            <div className="relative z-10">
+              <SiteHeader />
+              {children}
+            </div>
             <div className="fixed bottom-4 left-4 z-50 flex flex-wrap gap-2">
               <EffectsToggle />
               <SoundToggle />
