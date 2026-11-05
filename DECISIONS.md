@@ -120,3 +120,28 @@ forward.svg` — Madeleine Price Ball). Оригиналы лежат в
 Сайт и остальные модули — без бота. `TELEGRAM_MODE=fake`, `DEV_LOGIN=true`.
 **Почему.** Владелец: «с ботом пока ничего не делать, просто сайт и всё остальное
 без бота». Интеграция остаётся за Фазами 6/9 и требует токена отдельного бота.
+
+## D-15 · 2026-11-05 · Стенд `/_design` через rewrite
+
+**Решение.** Файлы стенда — `apps/web/app/design/`, а путь `/_design` работает
+через `rewrites` в `next.config.ts` (`/_design` → `/design`).
+**Почему.** Next.js не роутит папки, начинающиеся с `_` (private folders). ТЗ
+требует путь `/_design`; rewrite сохраняет его без отказа от конвенций Next.
+
+## D-16 · 2026-11-05 · QA-скриншоты: Playwright + `next dev`
+
+**Решение.** `pnpm qa:shots` — самодостаточный скрипт на Playwright (`@playwright/test`,
+chromium): 4 ширины, отдельный кадр с курсором на интерактиве и reduced-motion,
+сохранение в `qa/shots/<phase>/`. QA-сервер поднимается как `next dev`.
+**Почему.** `next start` работает в production-режиме, и env-гард корректно
+блокирует `DEV_LOGIN=true`/`fake`-провайдеры. Для локальных скриншотов нужен
+dev-режим; production-гард не ослабляем. В продакшене скриншоты снимутся против
+реального окружения (Фаза 5).
+
+## D-17 · 2026-11-05 · Шрифты self-host
+
+**Решение.** `@fontsource/cormorant-garamond`, `@fontsource/oswald`,
+`@fontsource/ibm-plex-mono`, `@fontsource/inter`; импорт нужных весов в
+`app/layout.tsx`. Стандартные `*.css` включают кириллицу (проверено).
+**Почему.** ТЗ §15.1/§4.2: самохост, без внешних CDN в рантайме.
+
