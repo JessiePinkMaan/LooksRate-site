@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { BeltDivider, cn, RivetedCard } from "@loxrate/ui";
 
 import { Reveal } from "@/components/landing/Reveal";
+import { FoundersScene } from "@/components/landing/FoundersScene";
 import { RanksCorridor } from "@/components/landing/RanksCorridor";
 import { ScrollTransition } from "@/components/landing/ScrollTransition";
 import { ThresholdLoader } from "@/components/landing/ThresholdLoader";
@@ -50,6 +51,7 @@ const navItems = [
   ["04", "lore"],
   ["05", "ranks"],
   ["06", "vault"],
+  ["07", "founders"],
   ["08", "exit"],
 ] as const;
 
@@ -352,6 +354,9 @@ export default function HomePage() {
             </div>
           </section>
         </ScrollTransition>
+
+        {/* 07 · Основатели */}
+        <FoundersScene />
 
         {/* 08 · Footer «Выход» */}
         <footer
