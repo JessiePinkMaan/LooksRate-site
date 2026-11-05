@@ -1,8 +1,11 @@
 /**
- * Дизайн-система LoxRate. Фаза 0 — только токены-константы.
- * Компоненты (hold-кнопка, карточка с заклёпками, курсор) — Фаза 1.
+ * Дизайн-система LoxRate.
+ * Фаза 1: токены-константы + базовые компоненты (hold, карточка, курсор, тумблеры).
  */
-export const DESIGN_SYSTEM_VERSION = "0";
+
+export { cn } from "./cn";
+
+export const DESIGN_SYSTEM_VERSION = "1";
 
 export const palette = {
   void: "#030303",
@@ -20,8 +23,20 @@ export const palette = {
 
 export type PaletteToken = keyof typeof palette;
 
-export function cn(
-  ...parts: Array<string | false | null | undefined>
-): string {
-  return parts.filter(Boolean).join(" ");
-}
+export {
+  initPreferences,
+  usePreferences,
+  setPreferences,
+  getPreferences,
+} from "./effects";
+export type { Preferences } from "./effects";
+
+export { EffectsProvider } from "./components/EffectsProvider";
+export { HoldButton } from "./components/HoldButton";
+export type { HoldButtonProps } from "./components/HoldButton";
+export { RivetedCard } from "./components/RivetedCard";
+export type { RivetedCardProps } from "./components/RivetedCard";
+export { BeltDivider } from "./components/BeltDivider";
+export { CustomCursor } from "./components/CustomCursor";
+export { EffectsToggle } from "./components/EffectsToggle";
+export { SoundToggle } from "./components/SoundToggle";
