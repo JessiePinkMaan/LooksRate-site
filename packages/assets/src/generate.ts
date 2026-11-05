@@ -240,11 +240,17 @@ function makeDrone(seconds: number, sampleRate: number): Float32Array {
 function makeClick(seconds: number, sampleRate: number): Float32Array {
   const total = Math.floor(seconds * sampleRate);
   const out = new Float32Array(total);
+  // Детерминированный шум, чтобы `assets:generate` был воспроизводим.
+  let state = 0x9e3779b9;
+  const noise = (): number => {
+    state = (state * 1664525 + 1013904223) >>> 0;
+    return (state / 0x100000000) * 2 - 1;
+  };
   for (let i = 0; i < total; i += 1) {
     const t = i / sampleRate;
     const decay = Math.exp(-t * 40);
     const tone = Math.sin(2 * Math.PI * 90 * t) * 0.5;
-    out[i] = (Math.random() * 2 - 1) * 0.6 * decay + tone * decay;
+    out[i] = noise() * 0.6 * decay + tone * decay;
   }
   return out;
 }
