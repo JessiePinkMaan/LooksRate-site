@@ -7,9 +7,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const paths = [
     "",
     "/manifest",
+    "/founders",
     "/ranks",
     "/access",
     "/lore",
+    "/vault",
     ...legal.docs.map((doc) => `/legal/${doc.slug}`),
   ];
 

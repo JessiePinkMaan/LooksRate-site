@@ -21,9 +21,12 @@ test("главная: hero и CTA", async ({ page }) => {
 test("статические страницы отвечают", async ({ page }) => {
   const pages: Array<[string, string]> = [
     ["/manifest", "Манифест"],
+    ["/founders", "Основатели"],
     ["/ranks", "Лестница рангов"],
     ["/access", "Уровни доступа"],
     ["/lore", "Лор"],
+    ["/vault", "Видео"],
+    ["/login", "Вход"],
     ["/legal/rules", "Правила сообщества"],
   ];
 

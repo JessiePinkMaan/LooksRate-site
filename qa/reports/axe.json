@@ -24,6 +24,14 @@
     "violations": []
   },
   {
+    "page": "vault",
+    "violations": []
+  },
+  {
+    "page": "login",
+    "violations": []
+  },
+  {
     "page": "legal-rules",
     "violations": []
   }
