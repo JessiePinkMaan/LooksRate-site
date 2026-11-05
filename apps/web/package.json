@@ -1,0 +1,34 @@
+{
+  "name": "@loxrate/web",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --port 3000",
+    "build": "next build",
+    "start": "next start --port 3000",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "vitest run --passWithNoTests",
+    "e2e": "playwright test",
+    "qa:shots": "node scripts/qa-shots.mjs",
+    "qa:a11y": "node scripts/qa-a11y.mjs",
+    "qa:perf": "node scripts/qa-perf.mjs"
+  },
+  "dependencies": {
+    "@loxrate/config": "workspace:*",
+    "@loxrate/ui": "workspace:*",
+    "next": "^16.4.5",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "zod": "^4.6.7",
+    "zustand": "^5.0.16"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@tailwindcss/postcss": "^4.3.4",
+    "tailwindcss": "^4.3.4",
+    "typescript": "^5.9.3",
+    "vitest": "^5.1.0"
+  }
+}

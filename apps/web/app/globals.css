@@ -1,0 +1,52 @@
+@import "tailwindcss";
+
+/*
+ * Базовые дизайн-токены (ТЗ §4.1). Полная дизайн-система — Фаза 1.
+ * Красный — не больше 5–8% площади, золото — только яблоко/высший ранг.
+ */
+@theme {
+  --color-void: #030303;
+  --color-basement: #0a0a0b;
+  --color-concrete: #131315;
+  --color-graphite: #1c1c20;
+  --color-steel: #6e727a;
+  --color-ash: #e9e4da;
+  --color-blood: #b3121b;
+  --color-blood-deep: #6e0a10;
+  --color-ember: #ff3b2f;
+  --color-gold-apple: #c9a227;
+  --color-bone: #cfc6b4;
+
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    Arial, sans-serif;
+  --font-mono: ui-monospace, "Cascadia Code", "Consolas", "IBM Plex Mono",
+    monospace;
+}
+
+:root {
+  color-scheme: dark;
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  background-color: var(--color-void);
+  color: var(--color-ash);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Уважаем reduced-motion на уровне базы (ТЗ §6.4, §18). */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
