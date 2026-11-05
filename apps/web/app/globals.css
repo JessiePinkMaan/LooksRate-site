@@ -94,6 +94,57 @@ body {
 }
 
 /* ---------------------------------------------------------------------------
+ * Лендинг: reveal и левитация яблока (ТЗ §8)
+ * ------------------------------------------------------------------------- */
+
+.reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  transition:
+    opacity 600ms ease,
+    transform 600ms ease;
+}
+
+.reveal[data-visible="true"] {
+  opacity: 1;
+  transform: none;
+}
+
+.apple-float {
+  animation: apple-float 7s ease-in-out infinite;
+  will-change: transform;
+}
+
+@keyframes apple-float {
+  0%,
+  100% {
+    transform: translateY(-6px);
+  }
+  50% {
+    transform: translateY(8px);
+  }
+}
+
+html[data-effects="off"] .reveal {
+  opacity: 1;
+  transform: none;
+}
+
+html[data-effects="off"] .apple-float {
+  animation: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+  .apple-float {
+    animation: none;
+  }
+}
+
+/* ---------------------------------------------------------------------------
  * Роут-переходы: fallback-кроссфейд (reduced-motion / без WebGL)
  * ------------------------------------------------------------------------- */
 
