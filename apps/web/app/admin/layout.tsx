@@ -28,6 +28,12 @@ export default async function AdminLayout({
           <TLink href="/admin/videos" className="hover:text-ash">
             Видео
           </TLink>
+          <TLink href="/admin/ideas" className="hover:text-ash">
+            Идеи
+          </TLink>
+          <TLink href="/admin/comments" className="hover:text-ash">
+            Комментарии
+          </TLink>
           <TLink href="/admin/users" className="hover:text-ash">
             Пользователи
           </TLink>

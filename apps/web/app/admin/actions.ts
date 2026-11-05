@@ -8,6 +8,7 @@ import type { Role } from "@loxrate/db";
 
 import { requireStaff } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { awardXp } from "@/lib/xp";
 
 const createVideoSchema = z.object({
   title: z.string().trim().min(2).max(160),
@@ -158,4 +159,100 @@ export async function updateUserRoleAction(formData: FormData): Promise<void> {
 
   revalidatePath("/admin/users");
   redirect("/admin/users");
+}
+
+const ideaStatusSchema = z.enum([
+  "NEW",
+  "UNDER_REVIEW",
+  "PLANNED",
+  "IN_PROGRESS",
+  "DONE",
+  "REJECTED",
+]);
+
+export async function updateIdeaStatusAction(
+  formData: FormData,
+): Promise<void> {
+  const staff = await requireStaff();
+  const ideaId = String(formData.get("ideaId") ?? "");
+  const parsed = ideaStatusSchema.safeParse(formData.get("status"));
+
+  if (!ideaId || !parsed.success) redirect("/admin/ideas");
+
+  const status = parsed.data;
+  const idea = await prisma.idea.findUnique({ where: { id: ideaId } });
+  if (!idea) redirect("/admin/ideas");
+
+  await prisma.idea.update({ where: { id: ideaId }, data: { status } });
+  await prisma.ideaStatusHistory.create({
+    data: {
+      ideaId,
+      fromStatus: idea.status,
+      toStatus: status,
+      changedById: staff.id,
+    },
+  });
+
+  if (status === "PLANNED") {
+    await awardXp({
+      userId: idea.userId,
+      type: "idea_planned",
+      amount: 150,
+      refType: "idea",
+      refId: ideaId,
+      idempotencyKey: `idea-planned:${ideaId}`,
+    });
+  }
+  if (status === "DONE") {
+    await awardXp({
+      userId: idea.userId,
+      type: "idea_done",
+      amount: 400,
+      refType: "idea",
+      refId: ideaId,
+      idempotencyKey: `idea-done:${ideaId}`,
+    });
+  }
+
+  await prisma.notification.create({
+    data: {
+      userId: idea.userId,
+      kind: "IDEA_STATUS",
+      payloadJson: { ideaId, status },
+    },
+  });
+
+  revalidatePath("/admin/ideas");
+  revalidatePath("/ideas");
+  revalidatePath(`/ideas/${ideaId}`);
+  redirect("/admin/ideas");
+}
+
+export async function moderateCommentAction(
+  formData: FormData,
+): Promise<void> {
+  await requireStaff();
+  const commentId = String(formData.get("commentId") ?? "");
+  const action = String(formData.get("action") ?? "");
+  if (!commentId) redirect("/admin/comments");
+
+  if (action === "hide") {
+    await prisma.comment.update({
+      where: { id: commentId },
+      data: { status: "HIDDEN" },
+    });
+  } else if (action === "delete") {
+    await prisma.comment.update({
+      where: { id: commentId },
+      data: { status: "DELETED" },
+    });
+  } else if (action === "restore") {
+    await prisma.comment.update({
+      where: { id: commentId },
+      data: { status: "VISIBLE" },
+    });
+  }
+
+  revalidatePath("/admin/comments");
+  redirect("/admin/comments");
 }
