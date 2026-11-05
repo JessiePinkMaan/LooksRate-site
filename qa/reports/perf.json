@@ -1,0 +1,37 @@
+{
+  "budgets": {
+    "lcpMs": 2500,
+    "cls": 0.1,
+    "initialJsBytes": 256000
+  },
+  "results": [
+    {
+      "path": "/",
+      "metrics": {
+        "lcpMs": 144,
+        "cls": 0.0116,
+        "jsBytes": 215028,
+        "cssBytes": 10988,
+        "transferBytes": 377800,
+        "requests": 29,
+        "domContentLoadedMs": 26,
+        "loadMs": 156
+      },
+      "problems": []
+    },
+    {
+      "path": "/manifest",
+      "metrics": {
+        "lcpMs": 1148,
+        "cls": 0,
+        "jsBytes": 209142,
+        "cssBytes": 10988,
+        "transferBytes": 300879,
+        "requests": 21,
+        "domContentLoadedMs": 25,
+        "loadMs": 64
+      },
+      "problems": []
+    }
+  ]
+}

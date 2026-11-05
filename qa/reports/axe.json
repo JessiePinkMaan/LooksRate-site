@@ -1,0 +1,30 @@
+[
+  {
+    "page": "home",
+    "violations": []
+  },
+  {
+    "page": "threshold",
+    "violations": []
+  },
+  {
+    "page": "manifest",
+    "violations": []
+  },
+  {
+    "page": "ranks",
+    "violations": []
+  },
+  {
+    "page": "access",
+    "violations": []
+  },
+  {
+    "page": "lore",
+    "violations": []
+  },
+  {
+    "page": "legal-rules",
+    "violations": []
+  }
+]
