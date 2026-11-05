@@ -1,0 +1,21 @@
+{
+  "note": "ASSET_NEEDED: реальные имена/роли/фото основателей не предоставлены. Пока — анонимные силуэты и псевдонимы (ТЗ §23).",
+  "founders": [
+    {
+      "alias": "Основатель I",
+      "role": "Голос Подвала",
+      "quote": "Будь неудобным.",
+      "sortOrder": 0,
+      "active": true,
+      "assetStatus": "ASSET_NEEDED"
+    },
+    {
+      "alias": "Основатель II",
+      "role": "Хранитель Кодекса",
+      "quote": "Тишина сильнее оправданий.",
+      "sortOrder": 1,
+      "active": true,
+      "assetStatus": "ASSET_NEEDED"
+    }
+  ]
+}

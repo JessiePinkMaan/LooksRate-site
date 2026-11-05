@@ -1,0 +1,10 @@
+{
+  "achievements": [
+    { "key": "first-blood", "name": "Первая кровь", "description": "Оставить первый комментарий.", "xpReward": 20, "sortOrder": 1 },
+    { "key": "silence", "name": "Тишина", "description": "Семь дней без входа — и вернуться.", "xpReward": 20, "sortOrder": 2 },
+    { "key": "inconvenient", "name": "Неудобный", "description": "Идея, которую ты предложил, реализована.", "xpReward": 200, "sortOrder": 3 },
+    { "key": "apple-fallen", "name": "Яблоко сорвано", "description": "Первый вход в Подвал.", "xpReward": 20, "sortOrder": 4 },
+    { "key": "discipline-7", "name": "Семь дней дисциплины", "description": "Серия из семи ежедневных ритуалов.", "xpReward": 100, "sortOrder": 5 },
+    { "key": "first-idea", "name": "Первый голос", "description": "Отправить первую идею.", "xpReward": 40, "sortOrder": 6 }
+  ]
+}

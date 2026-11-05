@@ -1,0 +1,13 @@
+{
+  "note": "Безопасный список ритуалов (ТЗ §10.4). Запрещены экстремальные диеты, голодание, препараты, «хаки» лица/костей.",
+  "quests": [
+    { "key": "water", "title": "Вода", "description": "Выпей норму воды за день, без подвигов.", "kind": "DAILY", "xpReward": 20, "safety": "SAFE", "sortOrder": 1 },
+    { "key": "sleep", "title": "Сон", "description": "Ляг вовремя. Сон — база, не роскошь.", "kind": "DAILY", "xpReward": 20, "safety": "SAFE", "sortOrder": 2 },
+    { "key": "walk", "title": "Прогулка", "description": "20 минут на улице без телефона.", "kind": "DAILY", "xpReward": 20, "safety": "SAFE", "sortOrder": 3 },
+    { "key": "workout", "title": "Тренировка", "description": "Любая посильная нагрузка. Форма важнее рекордов.", "kind": "DAILY", "xpReward": 20, "safety": "SAFE", "sortOrder": 4 },
+    { "key": "stretch", "title": "Растяжка", "description": "5–10 минут мягкой растяжки.", "kind": "DAILY", "xpReward": 20, "safety": "SAFE", "sortOrder": 5 },
+    { "key": "skincare", "title": "Уход за кожей", "description": "Простой уход: очищение и увлажнение.", "kind": "DAILY", "xpReward": 20, "safety": "SAFE", "sortOrder": 6 },
+    { "key": "no-complaints", "title": "День без жалоб", "description": "Замечай, когда хочется пожаловаться, и не жалуйся вслух.", "kind": "WEEKLY", "xpReward": 60, "safety": "SAFE", "sortOrder": 7 },
+    { "key": "say-no", "title": "Скажи «нет»", "description": "Скажи «нет» там, где хотел согласиться из удобства.", "kind": "WEEKLY", "xpReward": 60, "safety": "SAFE", "sortOrder": 8 }
+  ]
+}
