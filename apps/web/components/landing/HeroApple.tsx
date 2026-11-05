@@ -17,6 +17,7 @@ export function HeroApple() {
       onMouseEnter={() => setAwake(true)}
       onMouseLeave={() => setAwake(false)}
     >
+      <span className="hero-apple-rays" aria-hidden />
       <span className="hero-apple-glow" aria-hidden />
       <img
         className="hero-hand hero-hand-left"

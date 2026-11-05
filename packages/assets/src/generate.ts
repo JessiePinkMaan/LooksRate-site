@@ -341,35 +341,366 @@ async function prepareOg(): Promise<void> {
   console.log("  + og.png (1200×630, public root)");
 }
 
+type HandLayout = "vertical" | "horizontal";
+
+/**
+ * Отделяет живописную руку от мраморного фона. Кожа тёплая и насыщенная,
+ * мрамор — почти нейтральный: маска по `r - b` + насыщенности даёт чистый
+ * силуэт. Затем заливаем внутренние дырки и убираем мелкий мусор.
+ */
+function buildHandAlpha(
+  pixels: Buffer,
+  width: number,
+  height: number,
+): Uint8Array {
+  const total = width * height;
+  const alpha = new Uint8Array(total);
+
+  for (let i = 0; i < total; i += 1) {
+    const p = i * 4;
+    const r = pixels[p] ?? 0;
+    const g = pixels[p + 1] ?? 0;
+    const b = pixels[p + 2] ?? 0;
+    const max = Math.max(r, g, b);
+    const min = Math.min(r, g, b);
+    const saturation = max > 0 ? (max - min) / max : 0;
+    if (r - b > 26 && saturation > 0.14) alpha[i] = 255;
+  }
+
+  // Оставляем только крупнейшую связную область — саму руку.
+  const labels = new Int32Array(total).fill(-1);
+  const stack: number[] = [];
+  const sizes: number[] = [];
+
+  for (let start = 0; start < total; start += 1) {
+    if (alpha[start] === 0 || labels[start] !== -1) continue;
+    const label = sizes.length;
+    let size = 0;
+    stack.push(start);
+    labels[start] = label;
+
+    while (stack.length > 0) {
+      const index = stack.pop();
+      if (index === undefined) continue;
+      size += 1;
+      const x = index % width;
+      const y = (index - x) / width;
+
+      const neighbours = [
+        x > 0 ? index - 1 : -1,
+        x < width - 1 ? index + 1 : -1,
+        y > 0 ? index - width : -1,
+        y < height - 1 ? index + width : -1,
+      ];
+      for (const next of neighbours) {
+        if (next === -1 || alpha[next] === 0 || labels[next] !== -1) continue;
+        labels[next] = label;
+        stack.push(next);
+      }
+    }
+
+    sizes.push(size);
+  }
+
+  if (sizes.length > 0) {
+    let largest = 0;
+    for (let i = 1; i < sizes.length; i += 1) {
+      if ((sizes[i] ?? 0) > (sizes[largest] ?? 0)) largest = i;
+    }
+    for (let i = 0; i < total; i += 1) {
+      if (alpha[i] > 0 && labels[i] !== largest) alpha[i] = 0;
+    }
+  }
+
+  // Заливаем дырки: всё, что не связано с краем изображения.
+  const outside = new Uint8Array(total);
+  stack.length = 0;
+  for (let x = 0; x < width; x += 1) {
+    stack.push(x, (height - 1) * width + x);
+  }
+  for (let y = 0; y < height; y += 1) {
+    stack.push(y * width, y * width + width - 1);
+  }
+
+  while (stack.length > 0) {
+    const index = stack.pop();
+    if (index === undefined) continue;
+    if (index < 0 || index >= total) continue;
+    if (outside[index] === 1 || alpha[index] > 0) continue;
+    outside[index] = 1;
+
+    const x = index % width;
+    const y = (index - x) / width;
+    if (x > 0) stack.push(index - 1);
+    if (x < width - 1) stack.push(index + 1);
+    if (y > 0) stack.push(index - width);
+    if (y < height - 1) stack.push(index + width);
+  }
+
+  for (let i = 0; i < total; i += 1) {
+    if (alpha[i] === 0 && outside[i] === 0) alpha[i] = 255;
+  }
+
+  return alpha;
+}
+
+/** Обрезает прозрачные поля по фактической альфе. */
+async function trimAlpha(input: Buffer, width: number, height: number) {
+  let left = width;
+  let top = height;
+  let right = -1;
+  let bottom = -1;
+
+  for (let y = 0; y < height; y += 1) {
+    for (let x = 0; x < width; x += 1) {
+      const alpha = input[(y * width + x) * 4 + 3] ?? 0;
+      if (alpha < 8) continue;
+      if (x < left) left = x;
+      if (x > right) right = x;
+      if (y < top) top = y;
+      if (y > bottom) bottom = y;
+    }
+  }
+
+  if (right < left || bottom < top) {
+    return { data: input, width, height };
+  }
+
+  const cropWidth = right - left + 1;
+  const cropHeight = bottom - top + 1;
+  const { data, info } = await sharp(input, {
+    raw: { width, height, channels: 4 },
+  })
+    .extract({ left, top, width: cropWidth, height: cropHeight })
+    .raw()
+    .toBuffer({ resolveWithObject: true });
+
+  return { data: Buffer.from(data), width: info.width, height: info.height };
+}
+
+/** Обнуляет RGB у полностью прозрачных пикселей, чтобы браузер не
+ * подмешивал цвет фона в прозрачную область при масштабировании. */
+function clearTransparentRgb(data: Buffer): Buffer {
+  for (let i = 0; i < data.length; i += 4) {
+    if ((data[i + 3] ?? 0) > 0) continue;
+    data[i] = 0;
+    data[i + 1] = 0;
+    data[i + 2] = 0;
+  }
+  return data;
+}
+
+/**
+ * Горизонтальная рука для hero: ладонь сохраняем как есть, а предплечье
+ * растягиваем однородной полосой до края экрана — рука становится длинной
+ * без искажения кисти. Полоса выравнивается по запястью.
+ */
+async function stretchArm(
+  input: Buffer,
+  width: number,
+  height: number,
+  targetWidth: number,
+  targetHeight: number,
+): Promise<Buffer> {
+  const handWidth = Math.round(targetWidth * 0.4);
+  const overlap = Math.max(16, Math.round(targetWidth * 0.015));
+  const armWidth = targetWidth - handWidth + overlap;
+
+  const sourceHandLeft = Math.round(width * 0.58);
+  const handCropWidth = width - sourceHandLeft;
+  const scale = targetHeight / height;
+
+  const stripWidth = Math.max(3, Math.round(width * 0.05));
+  const stripLeft = Math.max(0, sourceHandLeft - stripWidth - 1);
+
+  const handCrop = await sharp(input, {
+    raw: { width, height, channels: 4 },
+  })
+    .extract({
+      left: sourceHandLeft,
+      top: 0,
+      width: handCropWidth,
+      height,
+    })
+    .png()
+    .toBuffer();
+
+  // Высота запястья по левому краю кисти — к ней подгоняем предплечье.
+  const handRaw = await sharp(handCrop).ensureAlpha().raw().toBuffer();
+  let wristTop = height;
+  let wristBottom = 0;
+  const wristColumn = Math.max(2, Math.round(handCropWidth * 0.12));
+  for (let y = 0; y < height; y += 1) {
+    for (let x = 0; x < wristColumn; x += 1) {
+      const alpha = handRaw[(y * handCropWidth + x) * 4 + 3] ?? 0;
+      if (alpha < 16) continue;
+      if (y < wristTop) wristTop = y;
+      if (y > wristBottom) wristBottom = y;
+    }
+  }
+  if (wristBottom <= wristTop) {
+    wristTop = Math.round(height * 0.25);
+    wristBottom = Math.round(height * 0.75);
+  }
+
+  const bandHeight = Math.max(
+    24,
+    Math.round((wristBottom - wristTop) * scale),
+  );
+  const bandTop = Math.max(
+    0,
+    Math.min(targetHeight - bandHeight, Math.round(wristTop * scale)),
+  );
+
+  const hand = await sharp(handCrop)
+    .resize(handWidth, targetHeight, { fit: "fill" })
+    .png()
+    .toBuffer();
+
+  const arm = await sharp(input, {
+    raw: { width, height, channels: 4 },
+  })
+    .extract({ left: stripLeft, top: 0, width: stripWidth, height })
+    .resize(armWidth, bandHeight, { fit: "fill" })
+    .png()
+    .toBuffer();
+
+  return sharp({
+    create: {
+      width: targetWidth,
+      height: targetHeight,
+      channels: 4,
+      background: { r: 0, g: 0, b: 0, alpha: 0 },
+    },
+  })
+    .composite([
+      { input: arm, left: 0, top: bandTop },
+      { input: hand, left: targetWidth - handWidth, top: 0 },
+    ])
+    .png()
+    .toBuffer();
+}
+
 async function renderHand(
   sourceFile: string,
   outFile: string,
   rotateDeg: number,
+  layout: HandLayout,
+  mirror = false,
 ): Promise<void> {
   const source = resolve(here, "../../../assets", sourceFile);
   if (!existsSync(source)) return;
 
-  let pipeline = sharp(source)
-    .trim({ threshold: 12 })
-    .resize(720, 720, { fit: "inside", withoutEnlargement: true });
+  const base = sharp(source).trim({ threshold: 12 });
+  const { data, info } = await base
+    .ensureAlpha()
+    .raw()
+    .toBuffer({ resolveWithObject: true });
 
+  const pixels = Buffer.from(data);
+  const { width, height } = info;
+  const alpha = buildHandAlpha(pixels, width, height);
+
+  // Мягкий край, чтобы силуэт не был «вырубленным».
+  const feathered = await sharp(Buffer.from(alpha), {
+    raw: { width, height, channels: 1 },
+  })
+    .blur(0.6)
+    .raw()
+    .toBuffer();
+
+  const featherChannels = Math.max(
+    1,
+    Math.round(feathered.length / (width * height)),
+  );
+  const rgba = Buffer.alloc(width * height * 4);
+  for (let i = 0; i < width * height; i += 1) {
+    const p = i * 4;
+    rgba[p] = pixels[p] ?? 0;
+    rgba[p + 1] = pixels[p + 1] ?? 0;
+    rgba[p + 2] = pixels[p + 2] ?? 0;
+    rgba[p + 3] = feathered[i * featherChannels] ?? 0;
+  }
+
+  let oriented = sharp(rgba, {
+    raw: { width, height, channels: 4 },
+  });
   if (rotateDeg !== 0) {
-    pipeline = pipeline.rotate(rotateDeg, {
+    oriented = oriented.rotate(rotateDeg, {
       background: { r: 0, g: 0, b: 0, alpha: 0 },
     });
   }
 
-  await pipeline.webp({ quality: 86 }).toFile(resolve(outDir, outFile));
+  const rotated = await oriented
+    .raw()
+    .toBuffer({ resolveWithObject: true });
+  const trimmed = await trimAlpha(
+    Buffer.from(rotated.data),
+    rotated.info.width,
+    rotated.info.height,
+  );
+  clearTransparentRgb(trimmed.data);
+
+  if (layout === "vertical") {
+    const targetHeight = 900;
+    const scale = Math.min(1.6, targetHeight / trimmed.height);
+    let pipeline = sharp(trimmed.data, {
+      raw: {
+        width: trimmed.width,
+        height: trimmed.height,
+        channels: 4,
+      },
+    }).resize({
+      height: Math.round(trimmed.height * scale),
+      fit: "inside",
+      kernel: "lanczos3",
+    });
+    if (mirror) pipeline = pipeline.flop();
+    await pipeline
+      .flatten({ background: { r: 0, g: 0, b: 0 } })
+      .webp({ quality: 88 })
+      .toFile(resolve(outDir, outFile));
+  } else {
+    const targetHeight = 500;
+    const targetWidth = Math.round(targetHeight * 2.8);
+    const stretched = await stretchArm(
+      trimmed.data,
+      trimmed.width,
+      trimmed.height,
+      targetWidth,
+      targetHeight,
+    );
+    const stretchedRaw = await sharp(stretched)
+      .ensureAlpha()
+      .raw()
+      .toBuffer({ resolveWithObject: true });
+    const tight = await trimAlpha(
+      Buffer.from(stretchedRaw.data),
+      stretchedRaw.info.width,
+      stretchedRaw.info.height,
+    );
+    clearTransparentRgb(tight.data);
+    let pipeline = sharp(tight.data, {
+      raw: { width: tight.width, height: tight.height, channels: 4 },
+    });
+    if (mirror) pipeline = pipeline.flop();
+    await pipeline
+      .flatten({ background: { r: 0, g: 0, b: 0 } })
+      .webp({ quality: 88 })
+      .toFile(resolve(outDir, outFile));
+  }
+
   console.log(`  + ${outFile}`);
 }
 
 async function prepareHands(): Promise<void> {
   // Вертикальные — для сцены «Основатели».
-  await renderHand("рука1.jpg", "hand-a.webp", 0);
-  await renderHand("рука2.jpg", "hand-b.webp", 0);
-  // Горизонтальные — для hero: тянутся к яблоку слева и справа.
-  await renderHand("рука2.jpg", "hand-left.webp", 90);
-  await renderHand("рука1.jpg", "hand-right.webp", 90);
+  await renderHand("рука1.jpg", "hand-a.webp", 0, "vertical");
+  await renderHand("рука2.jpg", "hand-b.webp", 0, "vertical");
+  // Горизонтальные — для hero: рука2 (указующий перст) слева,
+  // рука1 (расслабленная кисть) справа, ладонями к яблоку.
+  await renderHand("рука2.jpg", "hand-left.webp", 90, "horizontal");
+  await renderHand("рука1.jpg", "hand-right.webp", -90, "horizontal", true);
 }
 
 async function prepareBittenApple(): Promise<void> {
