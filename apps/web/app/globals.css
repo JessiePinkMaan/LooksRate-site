@@ -148,6 +148,42 @@ html[data-effects="off"] .apple-float {
  * Флагманская сцена «Основатели» (ТЗ §7)
  * ------------------------------------------------------------------------- */
 
+.founders-hands {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.founders-hand {
+  position: absolute;
+  width: min(40vw, 520px);
+  height: auto;
+  opacity: 0.2;
+  filter: invert(1) grayscale(1) contrast(1.2);
+  mix-blend-mode: screen;
+}
+
+.founders-hand-left {
+  left: -8vw;
+  top: 6%;
+  transform: rotate(6deg);
+}
+
+.founders-hand-right {
+  right: -8vw;
+  top: 10%;
+  transform: rotate(-6deg) scaleX(-1);
+}
+
+@media (max-width: 768px) {
+  .founders-hand {
+    width: 55vw;
+    opacity: 0.14;
+  }
+}
+
 .founders-scene {
   --p: 0;
   --lx: 50%;

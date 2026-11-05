@@ -9,17 +9,32 @@ export const metadata: Metadata = {
 export default function FoundersPage() {
   return (
     <main>
-      <div className="mx-auto max-w-5xl px-6 pb-4 pt-12">
-        <p className="font-mono text-[0.65rem] uppercase tracking-[0.5em] text-steel">
-          /founders
-        </p>
-        <h1 className="mt-4 font-heading text-5xl uppercase leading-[0.9] sm:text-7xl">
-          Основатели
-        </h1>
-        <p className="mt-4 max-w-2xl text-sm leading-relaxed text-steel">
-          Двое в свете лампы. Листай — цитаты появляются по одной; клик по фигуре
-          открывает досье.
-        </p>
+      <div className="relative overflow-hidden border-b border-graphite/40">
+        <div className="founders-hands" aria-hidden>
+          <img
+            src="/assets/hand-a.webp"
+            alt=""
+            className="founders-hand founders-hand-left"
+          />
+          <img
+            src="/assets/hand-b.webp"
+            alt=""
+            className="founders-hand founders-hand-right"
+          />
+        </div>
+
+        <div className="relative mx-auto max-w-5xl px-6 pb-10 pt-16">
+          <p className="font-mono text-[0.65rem] uppercase tracking-[0.5em] text-steel">
+            /founders
+          </p>
+          <h1 className="mt-4 font-heading text-5xl uppercase leading-[0.9] sm:text-7xl">
+            Основатели
+          </h1>
+          <p className="mt-4 max-w-2xl text-sm leading-relaxed text-steel">
+            Двое в свете лампы. Листай — цитаты появляются по одной; клик по
+            фигуре открывает досье.
+          </p>
+        </div>
       </div>
       <FoundersScene />
     </main>

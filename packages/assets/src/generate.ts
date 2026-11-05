@@ -341,6 +341,26 @@ async function prepareOg(): Promise<void> {
   console.log("  + og.png (1200×630, public root)");
 }
 
+async function prepareHands(): Promise<void> {
+  const hands = [
+    { file: "рука1.jpg", out: "hand-a.webp" },
+    { file: "рука2.jpg", out: "hand-b.webp" },
+  ];
+
+  for (const hand of hands) {
+    const source = resolve(here, "../../../assets", hand.file);
+    if (!existsSync(source)) continue;
+
+    await sharp(source)
+      .trim({ threshold: 12 })
+      .resize(720, 720, { fit: "inside", withoutEnlargement: true })
+      .webp({ quality: 84 })
+      .toFile(resolve(outDir, hand.out));
+
+    console.log(`  + ${hand.out}`);
+  }
+}
+
 async function main(): Promise<void> {
   mkdirSync(outDir, { recursive: true });
   mkdirSync(audioDir, { recursive: true });
@@ -369,6 +389,7 @@ async function main(): Promise<void> {
 
   await prepareApplePhoto();
   await prepareOg();
+  await prepareHands();
 
   console.log(
     "Готово. Это плейсхолдеры. Реальные ассеты — см. ASSETS_TODO.md (ASSET_NEEDED).",
