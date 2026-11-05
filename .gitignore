@@ -1,0 +1,36 @@
+# dependencies
+node_modules/
+.pnpm-store/
+
+# builds
+.next/
+out/
+dist/
+build/
+*.tsbuildinfo
+
+# env / secrets
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# prisma
+packages/db/prisma/*.db
+packages/db/prisma/*.db-journal
+
+# test / coverage
+coverage/
+.nyc_output/
+
+# turbo
+.turbo/
+
+# misc
+.DS_Store
+Thumbs.db
+*.log
+*.pem
+
+# local docker volumes (if any bind-mount here)
+.docker-data/
