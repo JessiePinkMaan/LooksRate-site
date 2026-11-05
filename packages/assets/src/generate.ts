@@ -5,13 +5,14 @@
  *
  * Куда кладём: apps/web/public/assets (см. DECISIONS D-3).
  */
-import { mkdirSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const outDir = resolve(here, "../../../apps/web/public/assets");
 const audioDir = resolve(outDir, "audio");
+const vendorDir = resolve(here, "../vendor");
 
 function writeSvg(name: string, content: string): void {
   writeFileSync(resolve(outDir, name), content.trim() + "\n", "utf8");
@@ -72,26 +73,51 @@ function logo(): string {
 </svg>`;
 }
 
-function hoodedFigure(variant: "a" | "b"): string {
-  const lean = variant === "a" ? -5 : 5;
-  const rim = variant === "a" ? -1 : 1;
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 300" role="img" aria-label="Силуэт основателя (ASSET_NEEDED)">
+/**
+ * Силуэты основателей берутся из CC0-оригиналов в `packages/assets/vendor`
+ * (см. vendor/LICENSE.md) и перекрашиваются в тёмный брендовый градиент.
+ * Динамический rim-свет — задача сцены (Фаза 4), в ассет не запекается.
+ */
+function extractSilhouette(file: string): {
+  d: string;
+  width: number;
+  height: number;
+} {
+  const raw = readFileSync(resolve(vendorDir, file), "utf8");
+  const dMatch = /<path[^>]*\sd="([^"]+)"/.exec(raw);
+  const widthMatch = /<svg[^>]*\swidth="([\d.]+)"/.exec(raw);
+  const heightMatch = /<svg[^>]*\sheight="([\d.]+)"/.exec(raw);
+
+  if (!dMatch) {
+    throw new Error(`В ${file} не найден <path d="…">`);
+  }
+
+  return {
+    d: dMatch[1] ?? "",
+    width: Number(widthMatch?.[1] ?? 200),
+    height: Number(heightMatch?.[1] ?? 400),
+  };
+}
+
+function styledSilhouette(
+  file: string,
+  variant: "a" | "b",
+  mirrored: boolean,
+): string {
+  const { d, width, height } = extractSilhouette(file);
+  const transform = mirrored
+    ? ` transform="translate(${width} 0) scale(-1 1)"`
+    : "";
+
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" role="img" aria-label="Силуэт основателя (CC0, плейсхолдер)">
   <defs>
-    <linearGradient id="body${variant}" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0%" stop-color="#050506"/>
-      <stop offset="70%" stop-color="#0B0B0C"/>
-      <stop offset="100%" stop-color="#141416"/>
-    </linearGradient>
-    <linearGradient id="rim${variant}" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0%" stop-color="#B3121B" stop-opacity="0"/>
-      <stop offset="100%" stop-color="#B3121B" stop-opacity="0.55"/>
+    <linearGradient id="sil-${variant}" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0c0c0e"/>
+      <stop offset="70%" stop-color="#08080a"/>
+      <stop offset="100%" stop-color="#040405"/>
     </linearGradient>
   </defs>
-  <g transform="translate(${lean} 0)">
-    <path d="M80 8C50 8 30 32 30 64c0 21 9 37 22 46-29 20-41 61-44 118-3 40 1 64 1 64h142s4-24 1-64c-3-57-15-98-44-118 13-9 22-25 22-46C130 32 110 8 80 8Z" fill="url(#body${variant})"/>
-    <path d="M80 42c-17 0-29 12-29 28 0 11 4 19 11 24 12-8 36-8 48 0 7-5 11-13 11-24 0-16-12-28-29-28Z" fill="#030303"/>
-    <path d="M80 8C50 8 30 32 30 64c0 21 9 37 22 46-29 20-41 61-44 118-3 40 1 64 1 64h12s-2-22 1-60c3-52 14-90 40-107-10-8-17-23-17-41 0-27 17-47 42-47 25 0 42 20 42 47 0 18-7 33-17 41 26 17 37 55 40 107 3 38 1 60 1 60h12s4-24 1-64c-3-57-15-98-44-118 13-9 22-25 22-46C130 32 110 8 80 8Z" fill="url(#rim${variant})" opacity="${rim > 0 ? 0.7 : 0.35}" transform="translate(${rim * 2} 0)"/>
-  </g>
+  <path${transform} d="${d}" fill="url(#sil-${variant})"/>
 </svg>`;
 }
 
@@ -233,8 +259,14 @@ function main(): void {
   writeSvg("logo.svg", logo());
   writeSvg("apple.svg", apple());
   writeSvg("apple-outline.svg", appleOutline());
-  writeSvg("founder-a.svg", hoodedFigure("a"));
-  writeSvg("founder-b.svg", hoodedFigure("b"));
+  writeSvg(
+    "founder-a.svg",
+    styledSilhouette("man-standing-pitr.svg", "a", false),
+  );
+  writeSvg(
+    "founder-b.svg",
+    styledSilhouette("man-standing-madprime.svg", "b", true),
+  );
   writeSvg("marble-bust.svg", marbleBust());
   writeSvg("lock.svg", lockIcon());
   writeSvg("grain.svg", grain());
