@@ -1,0 +1,711 @@
+// LoxRate — схема БД (источник истины, ТЗ §15.2).
+// PostgreSQL 16. Сгенерированный клиент подключается в packages/db/src.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  // URL для миграций задаётся в prisma.config.ts (Prisma 7).
+}
+
+// ===========================================================================
+// ENUMS
+// ===========================================================================
+
+enum Role {
+  OWNER
+  ADMIN
+  MODERATOR
+  EDITOR
+  USER
+  GUEST
+}
+
+enum UserStatus {
+  ACTIVE
+  BANNED
+  TIMEOUT
+  SHADOWBANNED
+}
+
+enum AccountProvider {
+  TELEGRAM
+}
+
+enum VideoStatus {
+  UPLOADING
+  QUEUED
+  PROCESSING
+  READY
+  FAILED
+}
+
+enum VideoAssetKind {
+  ORIGINAL
+  HLS_PLAYLIST
+  SEGMENT
+  POSTER
+  PREVIEW_SPRITE
+  TEASER
+  SUBTITLE
+}
+
+enum AccessRuleType {
+  PUBLIC
+  AUTH
+  RANK
+  TIER
+  RANK_AND_TIER
+  PURCHASE
+  DATE
+}
+
+enum ReactionKind {
+  WHALE
+  HOTDOG
+  DISLIKE
+}
+
+enum CommentStatus {
+  VISIBLE
+  PENDING
+  HIDDEN
+  DELETED
+}
+
+enum IdeaStatus {
+  NEW
+  UNDER_REVIEW
+  PLANNED
+  IN_PROGRESS
+  DONE
+  REJECTED
+}
+
+enum PaymentProvider {
+  STARS
+  YOOKASSA
+  CRYPTO
+  FAKE
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCEEDED
+  FAILED
+  REFUNDED
+  CANCELLED
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  GRACE
+  EXPIRED
+  CANCELLED
+  REVOKED
+}
+
+enum NotificationKind {
+  COMMENT_REPLY
+  IDEA_STATUS
+  NEW_VIDEO
+  RANK_UP
+  SUBSCRIPTION_EXPIRING
+  SYSTEM
+}
+
+enum QuestKind {
+  DAILY
+  WEEKLY
+  CHAIN
+}
+
+enum SafetyLevel {
+  SAFE
+  CAUTION
+  DANGER
+}
+
+enum BanType {
+  BAN
+  TIMEOUT
+  SHADOWBAN
+}
+
+enum ReportStatus {
+  OPEN
+  RESOLVED
+  DISMISSED
+}
+
+// ===========================================================================
+// USER / AUTH
+// ===========================================================================
+
+model User {
+  id              String     @id @default(cuid())
+  tgId            String?    @unique @map("tg_id")
+  username        String?
+  displayName     String?    @map("display_name")
+  avatarKey       String?    @map("avatar_key")
+  bio             String?
+  role            Role       @default(USER)
+  rank            String     @default("R1")
+  xp              Int        @default(0)
+  streak          Int        @default(0)
+  lastLoginAt     DateTime?  @map("last_login_at")
+  ageConfirmedAt  DateTime?  @map("age_confirmed_at")
+  termsAcceptedAt DateTime?  @map("terms_accepted_at")
+  status          UserStatus @default(ACTIVE)
+  createdAt       DateTime   @default(now()) @map("created_at")
+  updatedAt       DateTime   @updatedAt @map("updated_at")
+
+  sessions          Session[]
+  accounts          Account[]
+  xpEvents          XpEvent[]
+  achievements      UserAchievement[]
+  questCompletions  QuestCompletion[]
+  subscriptions     Subscription[]
+  payments          Payment[]
+  promoRedemptions  PromoRedemption[]
+  watchProgress     WatchProgress[]
+  reactions         Reaction[]
+  comments          Comment[]
+  commentReports    CommentReport[]     @relation("CommentReporter")
+  ideas             Idea[]
+  ideaVotes         IdeaVote[]
+  ideaStatusChanges IdeaStatusHistory[]
+  notifications     Notification[]
+  referralsMade     Referral[]          @relation("Referrer")
+  playbackSessions  PlaybackSession[]
+  auditLogs         AuditLog[]
+  bansReceived      Ban[]               @relation("BannedUser")
+  bansIssued        Ban[]               @relation("BannedBy")
+  createdVideos     Video[]             @relation("VideoAuthor")
+  updatedContent    ContentBlock[]
+
+  @@index([rank])
+  @@map("users")
+}
+
+model Session {
+  id        String    @id @default(cuid())
+  tokenHash String    @unique @map("token_hash")
+  userId    String    @map("user_id")
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime  @map("expires_at")
+  revokedAt DateTime? @map("revoked_at")
+  userAgent String?   @map("user_agent")
+  ip        String?
+  createdAt DateTime  @default(now()) @map("created_at")
+
+  @@index([userId])
+  @@map("sessions")
+}
+
+model Account {
+  id         String          @id @default(cuid())
+  userId     String          @map("user_id")
+  user       User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  provider   AccountProvider
+  providerId String          @map("provider_id")
+  createdAt  DateTime        @default(now()) @map("created_at")
+
+  @@unique([provider, providerId])
+  @@index([userId])
+  @@map("accounts")
+}
+
+// ===========================================================================
+// RANKS / XP / ACHIEVEMENTS / QUESTS
+// ===========================================================================
+
+model RankConfig {
+  rank      String @id
+  name      String
+  minXp     Int    @map("min_xp")
+  perksJson Json   @map("perks_json")
+  sortOrder Int    @default(0) @map("sort_order")
+
+  @@map("ranks_config")
+}
+
+model XpEvent {
+  id             String    @id @default(cuid())
+  userId         String    @map("user_id")
+  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type           String
+  amount         Int
+  refType        String?   @map("ref_type")
+  refId          String?   @map("ref_id")
+  idempotencyKey String    @unique @map("idempotency_key")
+  revertedAt     DateTime? @map("reverted_at")
+  revertedBy     String?   @map("reverted_by")
+  createdAt      DateTime  @default(now()) @map("created_at")
+
+  @@index([userId, createdAt])
+  @@index([type])
+  @@map("xp_events")
+}
+
+model Achievement {
+  id          String @id @default(cuid())
+  key         String @unique
+  name        String
+  description String
+  xpReward    Int    @default(0) @map("xp_reward")
+  icon        String?
+  sortOrder   Int    @default(0) @map("sort_order")
+
+  users UserAchievement[]
+
+  @@map("achievements")
+}
+
+model UserAchievement {
+  id            String      @id @default(cuid())
+  userId        String      @map("user_id")
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  achievementId String      @map("achievement_id")
+  achievement   Achievement @relation(fields: [achievementId], references: [id], onDelete: Cascade)
+  unlockedAt    DateTime    @default(now()) @map("unlocked_at")
+
+  @@unique([userId, achievementId])
+  @@index([achievementId])
+  @@map("user_achievements")
+}
+
+model Quest {
+  id          String      @id @default(cuid())
+  key         String      @unique
+  title       String
+  description String
+  kind        QuestKind   @default(DAILY)
+  xpReward    Int         @default(20) @map("xp_reward")
+  safety      SafetyLevel @default(SAFE)
+  active      Boolean     @default(true)
+  sortOrder   Int         @default(0) @map("sort_order")
+
+  completions QuestCompletion[]
+
+  @@map("quests")
+}
+
+model QuestCompletion {
+  id          String   @id @default(cuid())
+  userId      String   @map("user_id")
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  questId     String   @map("quest_id")
+  quest       Quest    @relation(fields: [questId], references: [id], onDelete: Cascade)
+  dateKey     String   @map("date_key")
+  completedAt DateTime @default(now()) @map("completed_at")
+
+  @@unique([userId, questId, dateKey])
+  @@index([questId])
+  @@map("quest_completions")
+}
+
+// ===========================================================================
+// SUBSCRIPTIONS / PAYMENTS
+// ===========================================================================
+
+model Tier {
+  id           String  @id @default(cuid())
+  key          String  @unique
+  name         String
+  description  String?
+  priceJson    Json?   @map("price_json")
+  durationDays Int?    @map("duration_days")
+  seatsLimit   Int?    @map("seats_limit")
+  perksJson    Json?   @map("perks_json")
+  active       Boolean @default(true)
+  sortOrder    Int     @default(0) @map("sort_order")
+
+  subscriptions Subscription[]
+  promoCodes    PromoCode[]     @relation("PromoCodeTier")
+
+  @@map("tiers")
+}
+
+model Subscription {
+  id         String             @id @default(cuid())
+  userId     String             @map("user_id")
+  user       User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tierId     String             @map("tier_id")
+  tier       Tier               @relation(fields: [tierId], references: [id])
+  startedAt  DateTime           @default(now()) @map("started_at")
+  expiresAt  DateTime           @map("expires_at")
+  status     SubscriptionStatus @default(ACTIVE)
+  source     String?
+  graceUntil DateTime?          @map("grace_until")
+  createdAt  DateTime           @default(now()) @map("created_at")
+
+  @@index([userId, status])
+  @@map("subscriptions")
+}
+
+model Payment {
+  id         String          @id @default(cuid())
+  userId     String          @map("user_id")
+  user       User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  provider   PaymentProvider
+  externalId String?         @map("external_id")
+  amount     Int
+  currency   String          @default("RUB")
+  status     PaymentStatus   @default(PENDING)
+  rawJson    Json?           @map("raw_json")
+  createdAt  DateTime        @default(now()) @map("created_at")
+
+  @@unique([provider, externalId])
+  @@index([userId])
+  @@map("payments")
+}
+
+model PromoCode {
+  id           String    @id @default(cuid())
+  code         String    @unique
+  tierId       String?   @map("tier_id")
+  tier         Tier?     @relation("PromoCodeTier", fields: [tierId], references: [id])
+  discountJson Json?     @map("discount_json")
+  expiresAt    DateTime? @map("expires_at")
+  maxUses      Int?      @map("max_uses")
+  uses         Int       @default(0)
+  active       Boolean   @default(true)
+  createdAt    DateTime  @default(now()) @map("created_at")
+
+  redemptions PromoRedemption[]
+
+  @@map("promo_codes")
+}
+
+model PromoRedemption {
+  id         String    @id @default(cuid())
+  promoId    String    @map("promo_id")
+  promo      PromoCode @relation(fields: [promoId], references: [id], onDelete: Cascade)
+  userId     String    @map("user_id")
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  redeemedAt DateTime  @default(now()) @map("redeemed_at")
+
+  @@unique([promoId, userId])
+  @@map("promo_redemptions")
+}
+
+// ===========================================================================
+// VIDEO / VAULT
+// ===========================================================================
+
+model Video {
+  id             String      @id @default(cuid())
+  slug           String      @unique
+  title          String
+  description    String?
+  status         VideoStatus @default(UPLOADING)
+  duration       Int?
+  posterKey      String?     @map("poster_key")
+  teaserKey      String?     @map("teaser_key")
+  publishAt      DateTime?   @map("publish_at")
+  createdById    String?     @map("created_by")
+  createdBy      User?       @relation("VideoAuthor", fields: [createdById], references: [id])
+  category       String?
+  tags           String[]    @default([])
+  allowComments  Boolean     @default(true) @map("allow_comments")
+  allowReactions Boolean     @default(true) @map("allow_reactions")
+  chaptersJson   Json?       @map("chapters_json")
+  subtitlesJson  Json?       @map("subtitles_json")
+  viewCount      Int         @default(0) @map("view_count")
+  createdAt      DateTime    @default(now()) @map("created_at")
+  updatedAt      DateTime    @updatedAt @map("updated_at")
+
+  assets           VideoAsset[]
+  accessRules      VideoAccessRule[]
+  watchProgress    WatchProgress[]
+  playbackSessions PlaybackSession[]
+
+  @@index([status, publishAt])
+  @@map("videos")
+}
+
+model VideoAsset {
+  id         String         @id @default(cuid())
+  videoId    String         @map("video_id")
+  video      Video          @relation(fields: [videoId], references: [id], onDelete: Cascade)
+  kind       VideoAssetKind
+  storageKey String         @map("storage_key")
+  resolution String?
+  size       Int?
+
+  @@index([videoId, kind])
+  @@map("video_assets")
+}
+
+model VideoAccessRule {
+  id       String         @id @default(cuid())
+  videoId  String         @map("video_id")
+  video    Video          @relation(fields: [videoId], references: [id], onDelete: Cascade)
+  type     AccessRuleType
+  minRank  String?        @map("min_rank")
+  minTier  String?        @map("min_tier")
+  priceId  String?        @map("price_id")
+  startsAt DateTime?      @map("starts_at")
+
+  @@index([videoId])
+  @@map("video_access_rules")
+}
+
+model WatchProgress {
+  id          String    @id @default(cuid())
+  userId      String    @map("user_id")
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  videoId     String    @map("video_id")
+  video       Video     @relation(fields: [videoId], references: [id], onDelete: Cascade)
+  position    Int       @default(0)
+  maxPosition Int       @default(0) @map("max_position")
+  completedAt DateTime? @map("completed_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  @@unique([userId, videoId])
+  @@index([videoId])
+  @@map("watch_progress")
+}
+
+model PlaybackSession {
+  id        String    @id @default(cuid())
+  userId    String    @map("user_id")
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  videoId   String    @map("video_id")
+  video     Video     @relation(fields: [videoId], references: [id], onDelete: Cascade)
+  ip        String?
+  startedAt DateTime  @default(now()) @map("started_at")
+  endedAt   DateTime? @map("ended_at")
+
+  @@index([userId, startedAt])
+  @@index([videoId])
+  @@map("playback_sessions")
+}
+
+// ===========================================================================
+// COMMUNITY: REACTIONS / COMMENTS / IDEAS / MODERATION
+// ===========================================================================
+
+// target_type + target_id — полиморфная ссылка (video | comment | idea | user).
+model Reaction {
+  id         String       @id @default(cuid())
+  userId     String       @map("user_id")
+  user       User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  targetType String       @map("target_type")
+  targetId   String       @map("target_id")
+  kind       ReactionKind
+  createdAt  DateTime     @default(now()) @map("created_at")
+
+  @@unique([userId, targetType, targetId, kind])
+  @@index([targetType, targetId])
+  @@map("reactions")
+}
+
+// target_type + target_id — полиморфная ссылка. parent_id — ветка (без FK).
+model Comment {
+  id         String        @id @default(cuid())
+  userId     String        @map("user_id")
+  user       User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  targetType String        @map("target_type")
+  targetId   String        @map("target_id")
+  parentId   String?       @map("parent_id")
+  body       String
+  status     CommentStatus @default(VISIBLE)
+  createdAt  DateTime      @default(now()) @map("created_at")
+  editedAt   DateTime?     @map("edited_at")
+
+  reports CommentReport[]
+
+  @@index([targetType, targetId, status, createdAt])
+  @@index([userId])
+  @@map("comments")
+}
+
+model CommentReport {
+  id         String       @id @default(cuid())
+  commentId  String       @map("comment_id")
+  comment    Comment      @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  reporterId String       @map("reporter_id")
+  reporter   User         @relation("CommentReporter", fields: [reporterId], references: [id], onDelete: Cascade)
+  reason     String
+  status     ReportStatus @default(OPEN)
+  createdAt  DateTime     @default(now()) @map("created_at")
+
+  @@unique([commentId, reporterId])
+  @@map("comment_reports")
+}
+
+model Ban {
+  id         String    @id @default(cuid())
+  userId     String    @map("user_id")
+  user       User      @relation("BannedUser", fields: [userId], references: [id], onDelete: Cascade)
+  bannedById String?   @map("banned_by")
+  bannedBy   User?     @relation("BannedBy", fields: [bannedById], references: [id])
+  type       BanType   @default(BAN)
+  reason     String
+  expiresAt  DateTime? @map("expires_at")
+  createdAt  DateTime  @default(now()) @map("created_at")
+
+  @@index([userId])
+  @@map("bans")
+}
+
+model Idea {
+  id           String     @id @default(cuid())
+  userId       String     @map("user_id")
+  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title        String
+  body         String
+  category     String
+  status       IdeaStatus @default(NEW)
+  mergedIntoId String?    @map("merged_into")
+  createdAt    DateTime   @default(now()) @map("created_at")
+  updatedAt    DateTime   @updatedAt @map("updated_at")
+
+  votes   IdeaVote[]
+  history IdeaStatusHistory[]
+
+  @@index([status, createdAt])
+  @@map("ideas")
+}
+
+model IdeaVote {
+  id        String   @id @default(cuid())
+  ideaId    String   @map("idea_id")
+  idea      Idea     @relation(fields: [ideaId], references: [id], onDelete: Cascade)
+  userId    String   @map("user_id")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  weight    Float    @default(1)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@unique([ideaId, userId])
+  @@map("idea_votes")
+}
+
+model IdeaStatusHistory {
+  id          String      @id @default(cuid())
+  ideaId      String      @map("idea_id")
+  idea        Idea        @relation(fields: [ideaId], references: [id], onDelete: Cascade)
+  fromStatus  IdeaStatus? @map("from_status")
+  toStatus    IdeaStatus  @map("to_status")
+  changedById String?     @map("changed_by")
+  changedBy   User?       @relation(fields: [changedById], references: [id])
+  changedAt   DateTime    @default(now()) @map("changed_at")
+
+  @@map("idea_status_history")
+}
+
+model Notification {
+  id          String           @id @default(cuid())
+  userId      String           @map("user_id")
+  user        User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  kind        NotificationKind
+  payloadJson Json             @map("payload_json")
+  readAt      DateTime?        @map("read_at")
+  createdAt   DateTime         @default(now()) @map("created_at")
+
+  @@index([userId, readAt])
+  @@map("notifications")
+}
+
+model Announcement {
+  id         String   @id @default(cuid())
+  title      String
+  body       String
+  targetJson Json?    @map("target_json")
+  active     Boolean  @default(true)
+  publishAt  DateTime @default(now()) @map("publish_at")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  @@map("announcements")
+}
+
+// ===========================================================================
+// CONTENT / LORE / FOUNDERS / MISC
+// ===========================================================================
+
+model ContentBlock {
+  id          String   @id @default(cuid())
+  key         String
+  locale      String   @default("ru")
+  json        Json
+  version     Int      @default(1)
+  updatedById String?  @map("updated_by")
+  updatedBy   User?    @relation(fields: [updatedById], references: [id])
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@unique([key, locale])
+  @@map("content_blocks")
+}
+
+model GlossaryTerm {
+  id          String      @id @default(cuid())
+  slug        String      @unique
+  term        String
+  level       Int         @default(1)
+  definition  String
+  origin      String?
+  science     String?
+  loxrateTake String?     @map("loxrate_take")
+  safety      SafetyLevel @default(SAFE)
+  sourcesJson Json?       @map("sources_json")
+  active      Boolean     @default(true)
+  sortOrder   Int         @default(0) @map("sort_order")
+
+  @@map("glossary_terms")
+}
+
+model Founder {
+  id              String  @id @default(cuid())
+  alias           String
+  role            String
+  quote           String?
+  linksJson       Json?   @map("links_json")
+  layerAssetsJson Json?   @map("layer_assets_json")
+  sortOrder       Int     @default(0) @map("sort_order")
+  active          Boolean @default(true)
+
+  @@map("founders")
+}
+
+model Referral {
+  id          String   @id @default(cuid())
+  referrerId  String   @map("referrer_id")
+  referrer    User     @relation("Referrer", fields: [referrerId], references: [id], onDelete: Cascade)
+  refereeTgId String   @map("referee_tg_id")
+  code        String   @unique
+  status      String   @default("pending")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@index([referrerId])
+  @@map("referrals")
+}
+
+model FeatureFlag {
+  id        String  @id @default(cuid())
+  key       String  @unique
+  valueJson Json?   @map("value_json")
+  enabled   Boolean @default(false)
+
+  @@map("feature_flags")
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  actorId    String?  @map("actor_id")
+  actor      User?    @relation(fields: [actorId], references: [id])
+  actorRole  String   @map("actor_role")
+  action     String
+  entityType String   @map("entity_type")
+  entityId   String?  @map("entity_id")
+  beforeJson Json?    @map("before_json")
+  afterJson  Json?    @map("after_json")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  @@index([entityType, entityId])
+  @@index([actorId])
+  @@map("audit_log")
+}
