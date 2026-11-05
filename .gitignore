@@ -23,6 +23,10 @@ packages/db/prisma/*.db-journal
 coverage/
 .nyc_output/
 
+# playwright
+test-results/
+playwright-report/
+
 # turbo
 .turbo/
 
