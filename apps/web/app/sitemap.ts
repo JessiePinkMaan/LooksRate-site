@@ -12,6 +12,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/access",
     "/lore",
     "/vault",
+    "/ideas",
+    "/hall",
     ...legal.docs.map((doc) => `/legal/${doc.slug}`),
   ];
 

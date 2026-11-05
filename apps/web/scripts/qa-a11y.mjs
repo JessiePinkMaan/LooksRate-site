@@ -53,6 +53,8 @@ const pages = [
   { name: "access", path: "/access", init: effectsOff },
   { name: "lore", path: "/lore", init: effectsOff },
   { name: "vault", path: "/vault", init: effectsOff },
+  { name: "ideas", path: "/ideas", init: effectsOff },
+  { name: "hall", path: "/hall", init: effectsOff },
   { name: "login", path: "/login", init: effectsOff },
   { name: "legal-rules", path: "/legal/rules", init: effectsOff },
 ];
