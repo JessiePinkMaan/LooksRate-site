@@ -4,6 +4,11 @@
 
 ## [Unreleased]
 
+### Founders hands — готово к приёмке
+- Добавлены и обрезаны руки из «Сотворения Адама» (`assets` → `hand-a/b.webp`).
+- Призрачный слой в интро `/founders` (invert/grayscale/screen).
+- a11y 0 на 13 страницах.
+
 ### Video (Phase 8-lite) — готово к приёмке
 - Загрузка видео в админке (mp4/webm/mov, до 512 МБ) → `storage/videos`.
 - Range-стриминг `/api/videos/[id]/stream` с проверкой доступа (200/206/403).
