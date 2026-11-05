@@ -1,0 +1,11 @@
+{
+  "note": "Превью Vault для лендинга (Фаза 3). Реальные видео — из БД (Фаза 8).",
+  "videos": [
+    { "slug": "welcome-to-vault", "title": "Первый вход в Подвал", "access": "PUBLIC", "duration": "08:12", "locked": false },
+    { "slug": "discipline-basics", "title": "Дисциплина: база", "access": "AUTH", "duration": "12:40", "locked": false },
+    { "slug": "rank-r3-brief", "title": "Брифинг для Бойцов", "access": "R3", "duration": "15:05", "locked": true },
+    { "slug": "basement-session", "title": "Сессия Подвала", "access": "T2", "duration": "21:30", "locked": true },
+    { "slug": "council-only", "title": "Только для Совета", "access": "T3", "duration": "34:18", "locked": true },
+    { "slug": "apple-and-bone", "title": "Яблоко и кость", "access": "T4", "duration": "18:02", "locked": true }
+  ]
+}
