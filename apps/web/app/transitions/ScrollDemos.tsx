@@ -104,7 +104,7 @@ export function ScrollDemos() {
           ref={t4}
           className="origin-left border border-graphite bg-concrete p-8 [transform-style:preserve-3d]"
         >
-          <p className="font-mono text-[0.6rem] uppercase tracking-[0.3em] text-blood">
+          <p className="font-mono text-[0.6rem] uppercase tracking-[0.3em] text-ember">
             T4 · класс A
           </p>
           <p className="mt-2 font-heading text-3xl uppercase">
@@ -120,7 +120,7 @@ export function ScrollDemos() {
         ref={t5}
         className="border border-graphite bg-concrete p-8 [transform-origin:center]"
       >
-        <p className="font-mono text-[0.6rem] uppercase tracking-[0.3em] text-blood">
+        <p className="font-mono text-[0.6rem] uppercase tracking-[0.3em] text-ember">
           T5 · класс A
         </p>
         <p className="mt-2 font-heading text-3xl uppercase">Туннель</p>
@@ -133,7 +133,7 @@ export function ScrollDemos() {
         ref={t7}
         className="border border-graphite bg-concrete p-8"
       >
-        <p className="font-mono text-[0.6rem] uppercase tracking-[0.3em] text-blood">
+        <p className="font-mono text-[0.6rem] uppercase tracking-[0.3em] text-ember">
           T7 · onEnter
         </p>
         <p className="mt-2 font-heading text-3xl uppercase">Опрокидывание</p>
@@ -147,7 +147,7 @@ export function ScrollDemos() {
         ref={t8}
         className="border border-graphite bg-concrete p-8"
       >
-        <p className="font-mono text-[0.6rem] uppercase tracking-[0.3em] text-blood">
+        <p className="font-mono text-[0.6rem] uppercase tracking-[0.3em] text-ember">
           T8 · класс A
         </p>
         <p className="mt-2 font-heading text-3xl uppercase">Цепи</p>

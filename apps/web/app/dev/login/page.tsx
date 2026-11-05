@@ -52,7 +52,7 @@ export default function DevLoginPage() {
                 {character.key} · tg_id {character.tgId}
               </p>
             </div>
-            <span className="font-mono text-xs text-steel/60">скоро</span>
+            <span className="font-mono text-xs text-steel">скоро</span>
           </li>
         ))}
       </ul>

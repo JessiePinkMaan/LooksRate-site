@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 function SectionTitle({ n, title }: { n: string; title: string }) {
   return (
     <div className="mb-6 flex items-baseline gap-4">
-      <span className="font-mono text-xs text-blood">{n}</span>
+      <span className="font-mono text-xs text-ember">{n}</span>
       <h2 className="font-heading text-2xl uppercase tracking-[0.06em]">
         {title}
       </h2>

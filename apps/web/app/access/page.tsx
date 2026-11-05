@@ -45,7 +45,7 @@ export default function AccessPage() {
                 <li key={perk}>· {perk}</li>
               ))}
             </ul>
-            <p className="mt-4 font-mono text-[0.6rem] uppercase tracking-[0.2em] text-blood">
+            <p className="mt-4 font-mono text-[0.6rem] uppercase tracking-[0.2em] text-ember">
               Цена: скоро
             </p>
           </RivetedCard>

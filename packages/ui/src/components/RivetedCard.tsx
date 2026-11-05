@@ -59,7 +59,7 @@ export function RivetedCard({
             <span />
           )}
           {number ? (
-            <span className="font-mono text-[0.65rem] text-steel/60">
+            <span className="font-mono text-[0.65rem] text-steel">
               {number}
             </span>
           ) : null}

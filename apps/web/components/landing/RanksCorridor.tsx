@@ -56,7 +56,7 @@ export function RanksCorridor() {
     >
       <div className="mx-auto flex max-w-5xl items-end justify-between gap-6 px-6 pt-16">
         <div>
-          <p className="font-mono text-[0.65rem] uppercase tracking-[0.4em] text-blood">
+          <p className="font-mono text-[0.65rem] uppercase tracking-[0.4em] text-ember">
             05 · Лестница рангов
           </p>
           <h2 className="mt-3 font-heading text-4xl uppercase sm:text-6xl">

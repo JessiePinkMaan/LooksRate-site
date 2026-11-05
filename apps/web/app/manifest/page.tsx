@@ -48,7 +48,7 @@ export default function ManifestPage() {
             key={rule.n}
             className="flex gap-4 border-b border-graphite/60 pb-4"
           >
-            <span className="shrink-0 font-mono text-xs tracking-[0.2em] text-blood">
+            <span className="shrink-0 font-mono text-xs tracking-[0.2em] text-ember">
               № {String(rule.n).padStart(3, "0")}
             </span>
             <span className="font-heading text-lg uppercase leading-tight">

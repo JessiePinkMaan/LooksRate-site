@@ -12,7 +12,7 @@ export const palette = {
   basement: "#0a0a0b",
   concrete: "#131315",
   graphite: "#1c1c20",
-  steel: "#6e727a",
+  steel: "#7f848e",
   ash: "#e9e4da",
   blood: "#b3121b",
   bloodDeep: "#6e0a10",

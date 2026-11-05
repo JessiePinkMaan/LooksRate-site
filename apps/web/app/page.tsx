@@ -71,7 +71,7 @@ export default function HomePage() {
           <a
             key={anchor}
             href={`#${anchor}`}
-            className="group flex items-center gap-2 font-mono text-[0.6rem] tracking-[0.2em] text-steel/60 transition-colors hover:text-ash"
+            className="group flex items-center gap-2 font-mono text-[0.6rem] tracking-[0.2em] text-steel transition-colors hover:text-ash"
           >
             <span className="h-px w-4 bg-steel/40 transition-all group-hover:w-6 group-hover:bg-blood" />
             {number}
@@ -136,7 +136,7 @@ export default function HomePage() {
             </TLink>
           </div>
 
-          <p className="relative mt-10 font-mono text-[0.55rem] uppercase tracking-[0.35em] text-steel/60">
+          <p className="relative mt-10 font-mono text-[0.55rem] uppercase tracking-[0.35em] text-steel">
             {microcopy.cookie}
           </p>
         </section>
@@ -148,7 +148,7 @@ export default function HomePage() {
             className="relative border-t border-graphite/60 px-6 py-24"
           >
             <div className="mx-auto max-w-3xl">
-              <p className="font-mono text-[0.65rem] uppercase tracking-[0.4em] text-blood">
+              <p className="font-mono text-[0.65rem] uppercase tracking-[0.4em] text-ember">
                 02 · Манифест
               </p>
               <h2 className="mt-3 font-heading text-4xl uppercase leading-[0.95] sm:text-6xl">
@@ -178,7 +178,7 @@ export default function HomePage() {
                     key={rule.n}
                     className="border border-graphite bg-concrete/60 p-4"
                   >
-                    <p className="font-mono text-[0.6rem] tracking-[0.25em] text-blood">
+                    <p className="font-mono text-[0.6rem] tracking-[0.25em] text-ember">
                       № {String(rule.n).padStart(3, "0")}
                     </p>
                     <p className="mt-2 font-heading text-base uppercase leading-tight tracking-[0.02em]">
@@ -198,7 +198,7 @@ export default function HomePage() {
             className="relative border-t border-graphite/60 px-6 py-24"
           >
             <div className="mx-auto max-w-5xl">
-              <p className="font-mono text-[0.65rem] uppercase tracking-[0.4em] text-blood">
+              <p className="font-mono text-[0.65rem] uppercase tracking-[0.4em] text-ember">
                 03 · Что такое LoxRate
               </p>
               <h2 className="mt-3 font-heading text-4xl uppercase sm:text-6xl">
@@ -249,7 +249,7 @@ export default function HomePage() {
             className="relative border-t border-graphite/60 bg-[linear-gradient(to_bottom,#0a0a0b,#030303)] px-6 py-24"
           >
             <div className="mx-auto max-w-5xl">
-              <p className="font-mono text-[0.65rem] uppercase tracking-[0.4em] text-blood">
+              <p className="font-mono text-[0.65rem] uppercase tracking-[0.4em] text-ember">
                 04 · Лор / Айсберг
               </p>
               <h2 className="mt-3 font-heading text-4xl uppercase sm:text-6xl">
@@ -297,7 +297,7 @@ export default function HomePage() {
             className="relative border-t border-graphite/60 px-6 py-24"
           >
             <div className="mx-auto max-w-5xl">
-              <p className="font-mono text-[0.65rem] uppercase tracking-[0.4em] text-blood">
+              <p className="font-mono text-[0.65rem] uppercase tracking-[0.4em] text-ember">
                 06 · Vault
               </p>
               <h2 className="mt-3 font-heading text-4xl uppercase sm:text-6xl">
@@ -364,7 +364,7 @@ export default function HomePage() {
           className="relative border-t border-graphite px-6 py-16"
         >
           <div className="mx-auto max-w-5xl">
-            <p className="font-mono text-[0.65rem] uppercase tracking-[0.4em] text-blood">
+            <p className="font-mono text-[0.65rem] uppercase tracking-[0.4em] text-ember">
               08 · Выход
             </p>
 

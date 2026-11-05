@@ -337,7 +337,7 @@ export function FoundersScene() {
           />
           <aside className="relative h-full w-full max-w-md overflow-y-auto border-l border-graphite bg-basement p-6">
             <div className="flex items-center justify-between gap-4">
-              <p className="font-mono text-[0.6rem] uppercase tracking-[0.3em] text-blood">
+              <p className="font-mono text-[0.6rem] uppercase tracking-[0.3em] text-ember">
                 Досье · № 00{(dossier ?? 0) + 1}
               </p>
               <button

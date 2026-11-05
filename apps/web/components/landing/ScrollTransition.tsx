@@ -57,10 +57,9 @@ export function ScrollTransition({
       } else if (kind === "fold") {
         gsap.fromTo(
           element,
-          { rotateY: 42, opacity: 0.35, transformPerspective: 1200 },
+          { rotateY: 42, transformPerspective: 1200 },
           {
             rotateY: 0,
-            opacity: 1,
             ease: "none",
             scrollTrigger: trigger,
           },
@@ -68,10 +67,9 @@ export function ScrollTransition({
       } else if (kind === "tunnel") {
         gsap.fromTo(
           element,
-          { scale: 1.3, opacity: 0.25, filter: "blur(8px)" },
+          { scale: 1.3, filter: "blur(8px)" },
           {
             scale: 1,
-            opacity: 1,
             filter: "blur(0px)",
             ease: "none",
             scrollTrigger: trigger,

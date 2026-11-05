@@ -14,7 +14,7 @@ const palette = [
   { token: "basement", hex: "#0A0A0B", note: "основной фон" },
   { token: "concrete", hex: "#131315", note: "карточки" },
   { token: "graphite", hex: "#1C1C20", note: "поднятые поверхности" },
-  { token: "steel", hex: "#6E727A", note: "вторичный текст" },
+  { token: "steel", hex: "#7F848E", note: "вторичный текст" },
   { token: "ash", hex: "#E9E4DA", note: "основной текст" },
   { token: "blood", hex: "#B3121B", note: "акцент 🔴" },
   { token: "blood-deep", hex: "#6E0A10", note: "тени/ховер" },
@@ -49,7 +49,7 @@ const typeSamples = [
 function SectionTitle({ n, title }: { n: string; title: string }) {
   return (
     <div className="mb-6 flex items-baseline gap-4">
-      <span className="font-mono text-xs text-blood">{n}</span>
+      <span className="font-mono text-xs text-ember">{n}</span>
       <h2 className="font-heading text-2xl uppercase tracking-[0.06em]">
         {title}
       </h2>
@@ -98,7 +98,7 @@ export default function DesignPage() {
                 <p className="font-mono text-[0.6rem] text-steel">
                   {swatch.hex}
                 </p>
-                <p className="mt-1 text-[0.65rem] leading-snug text-steel/70">
+                <p className="mt-1 text-[0.65rem] leading-snug text-steel">
                   {swatch.note}
                 </p>
               </div>

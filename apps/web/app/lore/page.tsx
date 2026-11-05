@@ -40,7 +40,7 @@ export default function LorePage() {
       </p>
 
       <div className="mt-6 border border-blood/40 bg-blood/5 p-5">
-        <p className="font-heading text-lg uppercase text-blood">Цена</p>
+        <p className="font-heading text-lg uppercase text-ember">Цена</p>
         <p className="mt-2 text-sm leading-relaxed text-steel">
           Опасные практики (боунсмэшинг, препараты, голодание, самоповреждение)
           здесь не описываются как инструкции. Если тебе тяжело — обратись к
