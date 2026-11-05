@@ -4,6 +4,16 @@
 
 ## [Unreleased]
 
+### Phase 5 — Выкат R1 — готово к приёмке
+- SEO: `sitemap.xml`, `robots.txt`, `icon.svg`, OG 1200×630, JSON-LD,
+  openGraph/twitter/canonical.
+- a11y: axe-аудит 7 страниц — **0 нарушений**; фиксы контраста (`steel`, `ember`,
+  убран `opacity` из scroll-переходов).
+- Перф: `/` LCP 144 мс · CLS 0.0116 · JS 210 КБ · transfer 369 КБ; бюджеты в норме.
+- Деплой: Dockerfile web/worker, `docker-compose.prod.yml`, `/api/health`,
+  migrate/seed tools, `pnpm db:backup`, `docs/DEPLOY.md`.
+- Кросс-браузер: Chromium проверен; Firefox/WebKit — по наличию.
+
 ### Phase 4 — «Основатели» — готово к приёмке
 - Флагманская сцена: пол, базовая лампа + фонарь за курсором, два силуэта (CC0),
   пыль, луч, заголовок «ОСНОВАТЕЛИ».
