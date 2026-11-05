@@ -12,7 +12,7 @@ import {
 } from "react";
 import type { ReactNode } from "react";
 
-import { usePreferences } from "@loxrate/ui";
+import { cn, usePreferences } from "@loxrate/ui";
 
 import type { Curtain, CurtainOrigin, CurtainType } from "./curtain";
 import { getLenis } from "./scroll";
@@ -175,7 +175,10 @@ export function TransitionProvider({ children }: { children: ReactNode }) {
       {children}
       <canvas
         ref={canvasRef}
-        className="pointer-events-none fixed inset-0 z-[200] h-full w-full"
+        className={cn(
+          "pointer-events-none fixed inset-0 z-[200] h-full w-full",
+          isTransitioning ? "block" : "hidden",
+        )}
         aria-hidden
       />
       <div className="transition-fallback" aria-hidden />
