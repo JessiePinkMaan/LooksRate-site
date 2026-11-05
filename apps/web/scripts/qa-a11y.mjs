@@ -52,6 +52,7 @@ const pages = [
   { name: "ranks", path: "/ranks", init: effectsOff },
   { name: "access", path: "/access", init: effectsOff },
   { name: "lore", path: "/lore", init: effectsOff },
+  { name: "founders", path: "/founders", init: effectsOff },
   { name: "vault", path: "/vault", init: effectsOff },
   {
     name: "vault-video",
