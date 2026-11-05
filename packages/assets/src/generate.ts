@@ -308,6 +308,39 @@ async function prepareApplePhoto(): Promise<void> {
   console.log("  + apple-photo-black.webp");
 }
 
+async function prepareOg(): Promise<void> {
+  const applePath = resolve(outDir, "apple-photo.png");
+  if (!existsSync(applePath)) return;
+
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630">
+  <defs>
+    <radialGradient id="glow" cx="50%" cy="40%" r="55%">
+      <stop offset="0%" stop-color="#C9A227" stop-opacity="0.18"/>
+      <stop offset="100%" stop-color="#030303" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="630" fill="#030303"/>
+  <rect width="1200" height="630" fill="url(#glow)"/>
+  <text x="600" y="380" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="92" font-weight="700" fill="#E9E4DA">LOXRATE</text>
+  <text x="600" y="434" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="22" letter-spacing="10" fill="#7F848E">PODVAL · APPLE · STOA</text>
+  <rect x="540" y="475" width="120" height="3" fill="#B3121B"/>
+</svg>`;
+
+  const base = await sharp(Buffer.from(svg)).png().toBuffer();
+  const apple = await sharp(applePath)
+    .resize(180, 185, {
+      fit: "contain",
+      background: { r: 0, g: 0, b: 0, alpha: 0 },
+    })
+    .toBuffer();
+
+  await sharp(base)
+    .composite([{ input: apple, left: 510, top: 70 }])
+    .png()
+    .toFile(resolve(outDir, "..", "og.png"));
+  console.log("  + og.png (1200×630, public root)");
+}
+
 async function main(): Promise<void> {
   mkdirSync(outDir, { recursive: true });
   mkdirSync(audioDir, { recursive: true });
@@ -335,6 +368,7 @@ async function main(): Promise<void> {
   writeWav("click.wav", makeClick(0.12, 22050));
 
   await prepareApplePhoto();
+  await prepareOg();
 
   console.log(
     "Готово. Это плейсхолдеры. Реальные ассеты — см. ASSETS_TODO.md (ASSET_NEEDED).",
