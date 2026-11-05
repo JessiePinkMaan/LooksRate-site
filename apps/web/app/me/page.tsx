@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 export default async function MePage() {
   const user = await requireUser();
 
-  const [subscriptions, achievements] = await Promise.all([
+  const [subscriptions, achievements, notifications] = await Promise.all([
     prisma.subscription.findMany({
       where: { userId: user.id },
       include: { tier: true },
@@ -26,6 +26,11 @@ export default async function MePage() {
       where: { userId: user.id },
       include: { achievement: true },
       orderBy: { unlockedAt: "desc" },
+    }),
+    prisma.notification.findMany({
+      where: { userId: user.id },
+      orderBy: { createdAt: "desc" },
+      take: 5,
     }),
   ]);
 
@@ -95,6 +100,31 @@ export default async function MePage() {
         </ul>
       ) : (
         <p className="mt-2 text-sm text-steel">Пока пусто. Здесь пока темно.</p>
+      )}
+
+      <h2 className="mt-10 font-heading text-2xl uppercase">Уведомления</h2>
+      {notifications.length > 0 ? (
+        <ul className="mt-4 space-y-2">
+          {notifications.map((notification) => (
+            <li
+              key={notification.id}
+              className="border border-graphite bg-concrete p-4 text-sm text-steel"
+            >
+              {notification.kind === "IDEA_STATUS"
+                ? "Статус твоей идеи изменён."
+                : notification.kind === "COMMENT_REPLY"
+                  ? "Ответ на твой комментарий."
+                  : notification.kind === "RANK_UP"
+                    ? "Новый ранг."
+                    : "Уведомление."}
+              <span className="ml-2 font-mono text-[0.55rem] uppercase tracking-[0.18em] text-steel">
+                {new Date(notification.createdAt).toLocaleDateString("ru-RU")}
+              </span>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="mt-2 text-sm text-steel">Пока тихо.</p>
       )}
 
       <div className="mt-10 flex flex-wrap gap-3">

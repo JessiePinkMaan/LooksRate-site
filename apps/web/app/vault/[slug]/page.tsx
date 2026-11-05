@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 
 import type { Video, VideoAccessRule } from "@loxrate/db";
 
+import { Comments } from "@/components/community/Comments";
+import { ReactionBar } from "@/components/community/ReactionBar";
 import { TLink } from "@/components/motion/TLink";
 import { decideAccess } from "@/lib/access";
 import { getSessionUser } from "@/lib/auth";
@@ -55,6 +57,12 @@ export default async function VideoPage({ params }: VideoPageProps) {
 
   const fallback = vaultPreview.videos.find((item) => item.slug === slug);
   if (!dbVideo && !fallback) notFound();
+
+  const videoReactions = dbVideo
+    ? await prisma.reaction.findMany({
+        where: { targetType: "video", targetId: dbVideo.id },
+      })
+    : [];
 
   let allowed = false;
   let reason = "";
@@ -129,15 +137,28 @@ export default async function VideoPage({ params }: VideoPageProps) {
               </p>
             ) : null}
 
-            <div className="mt-6 flex gap-4 font-mono text-sm text-steel">
-              <span>🐳</span>
-              <span>🌭</span>
-              <span>👎</span>
-            </div>
-            <p className="mt-4 text-xs text-steel">
-              Реакции и комментарии появятся вместе с сообществом (Фаза 7).
-            </p>
+            {dbVideo ? (
+              <div className="mt-6">
+                <ReactionBar
+                  targetType="video"
+                  targetId={dbVideo.id}
+                  reactions={videoReactions}
+                  user={user}
+                  path={`/vault/${slug}`}
+                />
+              </div>
+            ) : null}
           </div>
+
+          {dbVideo ? (
+            <div className="px-6 pb-6">
+              <Comments
+                targetType="video"
+                targetId={dbVideo.id}
+                path={`/vault/${slug}`}
+              />
+            </div>
+          ) : null}
         </section>
       ) : (
         <section className="mt-6 border border-blood/40 bg-blood/5 p-8 text-center">

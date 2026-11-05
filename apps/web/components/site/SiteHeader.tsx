@@ -8,6 +8,8 @@ const NAV = [
   ["Лор", "/lore"],
   ["Ранги", "/ranks"],
   ["Видео", "/vault"],
+  ["Идеи", "/ideas"],
+  ["Зал", "/hall"],
   ["Доступ", "/access"],
 ] as const;
 
