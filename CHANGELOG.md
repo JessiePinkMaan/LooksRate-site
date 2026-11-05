@@ -4,6 +4,15 @@
 
 ## [Unreleased]
 
+### Phase 2 — Движок движения — готово к приёмке
+- Lenis + GSAP ScrollTrigger (ленивый импорт), отключение при reduced-motion/эффектах.
+- `TransitionProvider`: cover → push → ready → scrollTo(0) → reveal, watchdog 4 с,
+  fallback-кроссфейд 200 мс.
+- Занавес на OGL: шейдеры T1/T2/T3/T6/T9, отдельный чанк, DPR ≤ 1.5.
+- `TLink` для внутренних переходов.
+- Стенд `/_transitions` (rewrite): 5 роут-переходов + T4/T5/T7/T8 (ScrollTrigger).
+- `pnpm qa:shots` расширен: стенд + кадр шейдерного перехода в середине.
+
 ### Phase 1 — Дизайн-система — готово к приёмке
 - Токены: палитра, типографика (Cormorant Garamond / Oswald / IBM Plex Mono / Inter),
   фактуры, базовая сетка.
