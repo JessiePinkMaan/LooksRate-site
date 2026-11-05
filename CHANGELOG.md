@@ -12,7 +12,8 @@
 - Перф: `/` LCP 144 мс · CLS 0.0116 · JS 210 КБ · transfer 369 КБ; бюджеты в норме.
 - Деплой: Dockerfile web/worker, `docker-compose.prod.yml`, `/api/health`,
   migrate/seed tools, `pnpm db:backup`, `docs/DEPLOY.md`.
-- Кросс-браузер: Chromium проверен; Firefox/WebKit — по наличию.
+- Кросс-браузер: Chromium; e2e-smoke 3/3 (главная, статические, health/SEO);
+  Firefox/WebKit — по наличию.
 
 ### Phase 4 — «Основатели» — готово к приёмке
 - Флагманская сцена: пол, базовая лампа + фонарь за курсором, два силуэта (CC0),
