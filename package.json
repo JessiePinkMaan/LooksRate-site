@@ -1,0 +1,36 @@
+{
+  "name": "loxrate",
+  "private": true,
+  "packageManager": "pnpm@12.16.1",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "lint": "eslint .",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "e2e": "turbo run e2e --filter=@loxrate/web",
+    "docker:up": "docker compose up -d",
+    "docker:down": "docker compose down",
+    "db:generate": "pnpm --filter @loxrate/db generate",
+    "db:migrate": "dotenv -e .env -- pnpm --filter @loxrate/db migrate",
+    "db:seed": "dotenv -e .env -- pnpm --filter @loxrate/db seed",
+    "db:reset": "dotenv -e .env -- pnpm --filter @loxrate/db reset",
+    "assets:generate": "pnpm --filter @loxrate/assets generate",
+    "qa:shots": "pnpm --filter @loxrate/web qa:shots",
+    "qa:a11y": "pnpm --filter @loxrate/web qa:a11y",
+    "qa:perf": "pnpm --filter @loxrate/web qa:perf"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@loxrate/config": "workspace:*",
+    "dotenv-cli": "^11.1.0",
+    "eslint": "^10.14.0",
+    "globals": "^17.14.0",
+    "turbo": "^2.11.10",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.72.1"
+  }
+}
