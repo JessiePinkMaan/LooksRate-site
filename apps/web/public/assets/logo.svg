@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 96" role="img" aria-label="LOXRATE">
+  <defs>
+    <radialGradient id="logoApple" cx="34%" cy="28%" r="78%">
+      <stop offset="0%" stop-color="#F0D27A"/>
+      <stop offset="40%" stop-color="#C9A227"/>
+      <stop offset="76%" stop-color="#B3121B"/>
+      <stop offset="100%" stop-color="#2E0407"/>
+    </radialGradient>
+  </defs>
+  <g transform="translate(4 4) scale(0.34)">
+    <path d="M128 72c-24-26-72-20-84 20-12 44 16 108 84 128 68-20 96-84 84-128-12-40-60-46-84-20Z" fill="url(#logoApple)"/>
+    <path d="M128 72c0-20 8-36 28-42" fill="none" stroke="#5C4310" stroke-width="8" stroke-linecap="round"/>
+  </g>
+  <text x="98" y="62" font-family="ui-monospace, 'Cascadia Code', Consolas, monospace" font-size="40" letter-spacing="9" fill="#E9E4DA">LOXRATE</text>
+</svg>

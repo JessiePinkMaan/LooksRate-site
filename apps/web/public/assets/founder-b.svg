@@ -1,4 +1,18 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 240" role="img" aria-label="Силуэт основателя (ASSET_NEEDED)">
-  <path transform="translate(4 0)" d="M60 8C38 8 23 26 23 51c0 16 7 28 17 35-22 15-31 46-33 90-2 30 1 48 1 48h104s3-18 1-48c-2-44-11-75-33-90 10-7 17-19 17-35C97 26 82 8 60 8Z" fill="#0B0B0C"/>
-  <path transform="translate(4 0)" d="M60 34c-13 0-22 9-22 21 0 8 3 14 8 18 9-6 27-6 36 0 5-4 8-10 8-18 0-12-9-21-22-21Z" fill="#050505"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 300" role="img" aria-label="Силуэт основателя (ASSET_NEEDED)">
+  <defs>
+    <linearGradient id="bodyb" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#050506"/>
+      <stop offset="70%" stop-color="#0B0B0C"/>
+      <stop offset="100%" stop-color="#141416"/>
+    </linearGradient>
+    <linearGradient id="rimb" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#B3121B" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#B3121B" stop-opacity="0.55"/>
+    </linearGradient>
+  </defs>
+  <g transform="translate(5 0)">
+    <path d="M80 8C50 8 30 32 30 64c0 21 9 37 22 46-29 20-41 61-44 118-3 40 1 64 1 64h142s4-24 1-64c-3-57-15-98-44-118 13-9 22-25 22-46C130 32 110 8 80 8Z" fill="url(#bodyb)"/>
+    <path d="M80 42c-17 0-29 12-29 28 0 11 4 19 11 24 12-8 36-8 48 0 7-5 11-13 11-24 0-16-12-28-29-28Z" fill="#030303"/>
+    <path d="M80 8C50 8 30 32 30 64c0 21 9 37 22 46-29 20-41 61-44 118-3 40 1 64 1 64h12s-2-22 1-60c3-52 14-90 40-107-10-8-17-23-17-41 0-27 17-47 42-47 25 0 42 20 42 47 0 18-7 33-17 41 26 17 37 55 40 107 3 38 1 60 1 60h12s4-24 1-64c-3-57-15-98-44-118 13-9 22-25 22-46C130 32 110 8 80 8Z" fill="url(#rimb)" opacity="0.7" transform="translate(2 0)"/>
+  </g>
 </svg>

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 300" role="img" aria-label="Мраморный бюст (ASSET_NEEDED)">
+  <defs>
+    <linearGradient id="marble" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#E9E4DA"/>
+      <stop offset="55%" stop-color="#CFC6B4"/>
+      <stop offset="100%" stop-color="#6E727A"/>
+    </linearGradient>
+  </defs>
+  <path d="M110 18C76 18 54 46 54 84c0 30 18 55 40 64v26c-30 8-62 26-74 62l-12 46h204l-12-46c-12-36-44-54-74-62v-26c22-9 40-34 40-64 0-38-22-66-56-66Z" fill="url(#marble)"/>
+  <path d="M88 66c8-6 16-9 22-9M110 57v40M96 104c8 6 20 6 28 0" fill="none" stroke="#6E727A" stroke-width="2" opacity="0.5"/>
+  <path d="M74 150c24 12 48 12 72 0" fill="none" stroke="#6E727A" stroke-width="2" opacity="0.4"/>
+</svg>

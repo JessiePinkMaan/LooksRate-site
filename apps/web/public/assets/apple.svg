@@ -1,13 +1,19 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="Золотое яблоко LoxRate">
   <defs>
     <radialGradient id="apple" cx="34%" cy="28%" r="78%">
-      <stop offset="0%" stop-color="#E8C766"/>
-      <stop offset="38%" stop-color="#C9A227"/>
-      <stop offset="72%" stop-color="#B3121B"/>
-      <stop offset="100%" stop-color="#3A0508"/>
+      <stop offset="0%" stop-color="#F0D27A"/>
+      <stop offset="34%" stop-color="#C9A227"/>
+      <stop offset="70%" stop-color="#B3121B"/>
+      <stop offset="100%" stop-color="#2E0407"/>
+    </radialGradient>
+    <radialGradient id="shine" cx="30%" cy="22%" r="30%">
+      <stop offset="0%" stop-color="#FFF4CC" stop-opacity="0.85"/>
+      <stop offset="100%" stop-color="#FFF4CC" stop-opacity="0"/>
     </radialGradient>
   </defs>
   <path d="M128 72c-24-26-72-20-84 20-12 44 16 108 84 128 68-20 96-84 84-128-12-40-60-46-84-20Z" fill="url(#apple)"/>
+  <ellipse cx="88" cy="104" rx="34" ry="22" fill="url(#shine)" transform="rotate(-22 88 104)"/>
   <path d="M128 72c0-20 8-36 28-42" fill="none" stroke="#5C4310" stroke-width="8" stroke-linecap="round"/>
-  <path d="M140 60c16-20 40-24 52-18-6 22-32 30-52 18Z" fill="#6E0A10"/>
+  <path d="M140 58c16-20 40-24 52-18-6 22-32 30-52 18Z" fill="#6E0A10"/>
+  <text x="128" y="206" text-anchor="middle" font-family="Georgia, serif" font-size="10" letter-spacing="5" fill="#2E0407" opacity="0.55">ΚΑΛΛΙΣΤΗ</text>
 </svg>
