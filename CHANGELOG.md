@@ -4,7 +4,7 @@
 
 ## [Unreleased]
 
-### Phase 0 — Основа, заглушки, сиды (в работе)
+### Phase 0 — Основа, заглушки, сиды — готово к приёмке
 - Каркас монорепы: pnpm workspaces + Turborepo, `apps/{web,worker}`,
   `packages/{config,db,ui,assets}`.
 - Корневые команды §25.2: `dev/build/lint/typecheck/test/e2e`,
