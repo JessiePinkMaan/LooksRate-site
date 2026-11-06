@@ -12,6 +12,7 @@ import { AppleImage } from "./AppleImage";
 
 const STORAGE_KEY = "loxrate:entered";
 const QUOTE_INTERVAL = 8000;
+const TREMBLE_VOLUME = 0.63;
 
 /** Тайминги интро. Держим синхронно с CSS (см. `.threshold-gate` intro). */
 const INTRO = {
@@ -113,7 +114,7 @@ export function ThresholdGate({
     const audio =
       trembleAudioRef.current ?? new Audio("/assets/audio/apple-tremble.mp3");
     trembleAudioRef.current = audio;
-    audio.volume = 0.55;
+    audio.volume = TREMBLE_VOLUME;
     audio.currentTime = 0;
     void audio.play().catch(() => {
       /* браузер может не дать автоплей - визуал не ломается */
@@ -123,7 +124,7 @@ export function ThresholdGate({
       timersRef.current.push(
         window.setTimeout(
           () => {
-            audio.volume = Math.max(0, 0.55 * (1 - step / 10));
+            audio.volume = Math.max(0, TREMBLE_VOLUME * (1 - step / 10));
           },
           INTRO.flightAt + step * 55,
         ),
