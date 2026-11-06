@@ -13,6 +13,9 @@
   диска там нет.
 - Добавлены `docs/DEPLOY_CLOUDFLARE.md` (Neon + Hyperdrive + GitHub Actions) и
   workflow `.github/workflows/deploy-cloudflare.yml`.
+- Миграции в Cloudflare-варианте запускаются локально: GitHub-раннер не всегда
+  достучится до бесплатного Neon (`P1001`), поэтому шаг `migrate` из workflow
+  убран.
 - Обычная Docker-сборка не изменилась: `output: standalone` остаётся, пока
   `CF_WORKERS` не выставлен.
 

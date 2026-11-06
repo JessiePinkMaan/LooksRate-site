@@ -96,7 +96,9 @@ ID Hyperdrive не секрет, его можно держать в репоз�
 |---|---|
 | `CLOUDFLARE_API_TOKEN` | токен Cloudflare (см. ниже) |
 | `CLOUDFLARE_ACCOUNT_ID` | Account ID из панели Cloudflare |
-| `DATABASE_URL` | строка Neon **без** `-pooler` (для миграций) |
+
+`DATABASE_URL` в GitHub не нужен: миграции запускаются с твоей машины
+(см. шаг 5).
 
 Токен Cloudflare: аватар → **My Profile → API Tokens → Create Token** →
 шаблон **Edit Cloudflare Workers** → Account Resources: твой аккаунт → Create.
@@ -118,15 +120,28 @@ details** (например, `864574e2...`).
 > `SITE_URL` попадает в `robots.txt` и `sitemap.xml` на этапе сборки. Если
 > позже поменяешь адрес, пересобери Worker.
 
-## Шаг 5. Первый деплой
+## Шаг 5. Миграции и первый деплой
+
+Миграции запускаются **с твоей машины**, а не из GitHub: у CI бывают проблемы
+с доступом к бесплатному Neon (`P1001`), а локально подключение стабильное.
+
+```powershell
+$env:DATABASE_URL="postgresql://...neon.../neondb?sslmode=require&channel_binding=require"
+pnpm --filter @loxrate/db exec prisma migrate deploy
+Remove-Item Env:\DATABASE_URL
+```
+
+Теперь деплой:
 
 1. В GitHub открой вкладку **Actions**.
 2. Слева выбери **Deploy Cloudflare Workers**.
 3. Нажми **Run workflow** → ветка с изменениями → **Run workflow**.
-4. Дождись зелёной галочки. Шаги: install → prisma generate → migrate → build →
-   deploy.
+4. Дождись зелёной галочки. Шаги: install → prisma generate → build → deploy.
 
 После первого запуска в Cloudflare появится Worker `loxrate`.
+
+При будущих изменениях схемы повторяй `prisma migrate deploy` локально перед
+деплоем.
 
 ## Шаг 6. Переменные окружения Worker
 

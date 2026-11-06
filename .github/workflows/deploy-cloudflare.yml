@@ -31,11 +31,6 @@ jobs:
       - name: Generate Prisma client
         run: pnpm --filter @loxrate/db generate
 
-      - name: Migrate database
-        run: pnpm --filter @loxrate/db exec prisma migrate deploy
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-
       - name: Build Worker
         run: pnpm --filter @loxrate/web cf:build
         env:
