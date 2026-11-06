@@ -3,11 +3,22 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
+import { usePreferences } from "@loxrate/ui";
+
 import { AuthForm } from "@/components/auth/AuthForm";
 import { entry } from "@/lib/content";
 
+import { AppleImage } from "./AppleImage";
+
 const STORAGE_KEY = "loxrate:entered";
 const QUOTE_INTERVAL = 8000;
+
+/** Тайминги интро. Держим синхронно с CSS (см. `.threshold-gate` intro). */
+const INTRO = {
+  flightAt: 2030,
+  doneAt: 2950,
+  flightDuration: 860,
+} as const;
 
 type Phase = "sealed" | "choice" | "auth" | "exit" | "done";
 type AuthMode = "login" | "register";
@@ -20,12 +31,18 @@ type ThresholdGateProps = {
 /**
  * Врата входа (комната 00): большое яблоко в темноте, цитаты стоиков
  * и мягкий вход в сайт. Пока пользователь не нажал яблоко — вокруг только
- * свет и текст. Эффекты уважают reduced-motion.
+ * свет и текст.
+ *
+ * После входа яблоко не крутится: оно дрожит и светится, пока шапка,
+ * её пункты и заголовок собираются по очереди. В финале яблоко перелетает
+ * на своё обычное место и уменьшается. reduced-motion/выключенные эффекты
+ * дают короткий статичный переход.
  */
 export function ThresholdGate({
   initiallyEntered = false,
 }: ThresholdGateProps) {
   const router = useRouter();
+  const { effects } = usePreferences();
   const [phase, setPhase] = useState<Phase>(
     initiallyEntered ? "done" : "sealed",
   );
@@ -33,6 +50,8 @@ export function ThresholdGate({
   const [quoteIndex, setQuoteIndex] = useState(0);
   const [reduce, setReduce] = useState(false);
   const finishedRef = useRef(false);
+  const appleRef = useRef<HTMLButtonElement>(null);
+  const timersRef = useRef<number[]>([]);
 
   useEffect(() => {
     if (finishedRef.current) return;
@@ -71,6 +90,21 @@ export function ThresholdGate({
     };
   }, [phase]);
 
+  // Если компонент ушёл раньше времени — снимаем интро-атрибут и таймеры.
+  useEffect(() => {
+    const timers = timersRef.current;
+    return () => {
+      for (const timer of timers) window.clearTimeout(timer);
+      document.documentElement.removeAttribute("data-intro");
+    };
+  }, []);
+
+  const finishIntro = (): void => {
+    document.documentElement.removeAttribute("data-intro");
+    setPhase("done");
+    router.refresh();
+  };
+
   const enterSite = (): void => {
     if (finishedRef.current) return;
     finishedRef.current = true;
@@ -79,13 +113,73 @@ export function ThresholdGate({
     } catch {
       /* без sessionStorage вход всё равно работает */
     }
+
+    const motionOff =
+      reduce ||
+      !effects ||
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
     setPhase("exit");
-    window.setTimeout(
-      () => {
-        setPhase("done");
-        router.refresh();
-      },
-      reduce ? 320 : 1500,
+
+    if (motionOff) {
+      timersRef.current.push(window.setTimeout(finishIntro, 260));
+      return;
+    }
+
+    document.documentElement.dataset.intro = "running";
+
+    timersRef.current.push(
+      window.setTimeout(() => {
+        const apple = appleRef.current;
+        const hero = document.querySelector<HTMLElement>("[data-hero-apple]");
+        if (!apple || !hero) {
+          finishIntro();
+          return;
+        }
+
+        apple.dataset.flight = "true";
+        const from = apple.getBoundingClientRect();
+        const to = hero.getBoundingClientRect();
+        const deltaX = to.left + to.width / 2 - (from.left + from.width / 2);
+        const deltaY = to.top + to.height / 2 - (from.top + from.height / 2);
+        const scale = Math.max(0.12, to.width / Math.max(1, from.width));
+
+        apple.animate(
+          [
+            {
+              transform: "translate3d(0, 0, 0) scale(1)",
+              opacity: 1,
+              filter:
+                "drop-shadow(0 0 54px rgba(255, 232, 164, 0.8)) drop-shadow(0 0 130px rgba(201, 162, 39, 0.55))",
+            },
+            {
+              transform: `translate3d(${deltaX * 0.55}px, ${deltaY * 0.35}px, 0) scale(${Math.max(
+                scale * 1.08,
+                1.02,
+              )})`,
+              opacity: 1,
+              offset: 0.55,
+              filter:
+                "drop-shadow(0 0 38px rgba(255, 232, 164, 0.55)) drop-shadow(0 0 90px rgba(201, 162, 39, 0.38))",
+            },
+            {
+              transform: `translate3d(${deltaX}px, ${deltaY}px, 0) scale(${scale})`,
+              opacity: 1,
+              filter:
+                "drop-shadow(0 0 26px rgba(201, 162, 39, 0.35)) drop-shadow(0 20px 40px rgba(0, 0, 0, 0.75))",
+            },
+          ],
+          {
+            duration: INTRO.flightDuration,
+            easing: "cubic-bezier(0.22, 0.9, 0.24, 1)",
+            fill: "forwards",
+          },
+        );
+      }, INTRO.flightAt),
+    );
+
+    timersRef.current.push(
+      window.setTimeout(finishIntro, INTRO.doneAt),
     );
   };
 
@@ -94,6 +188,8 @@ export function ThresholdGate({
   const quote = entry.quotes[quoteIndex] ?? entry.quotes[0];
   const showForm = phase === "auth";
   const exiting = phase === "exit";
+  const appleVariant =
+    phase === "choice" || phase === "auth" ? "cracked" : "whole";
 
   return (
     <div
@@ -109,21 +205,21 @@ export function ThresholdGate({
 
       <div className="threshold-stage">
         <button
+          ref={appleRef}
           type="button"
           onClick={() => {
             if (phase === "sealed") setPhase("choice");
           }}
           className="threshold-apple"
-          data-spin={exiting ? "true" : "false"}
           data-compact={showForm ? "true" : "false"}
           aria-label={entry.appleLabel}
         >
-          <img
-            src="/assets/apple-photo.webp"
-            alt=""
-            width={420}
-            height={436}
-            draggable={false}
+          <AppleImage
+            variant={appleVariant}
+            sizes="(max-width: 640px) 62vw, 430px"
+            width={430}
+            height={430}
+            fetchPriority="high"
           />
         </button>
 

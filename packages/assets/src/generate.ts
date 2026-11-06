@@ -5,7 +5,13 @@
  *
  * Куда кладём: apps/web/public/assets (см. DECISIONS D-3).
  */
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import {
+  copyFileSync,
+  existsSync,
+  mkdirSync,
+  readFileSync,
+  writeFileSync,
+} from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -259,57 +265,106 @@ function makeClick(seconds: number, sampleRate: number): Float32Array {
 
 // ---------------------------------------------------------------------------
 
+/** Фото яблок от владельца: чёрный фон вырезается по яркости. */
+const APPLE_SOURCES = {
+  whole: {
+    file: "9e77b19c-0d56-46d4-9458-9b2daf760580.png",
+    widths: [320, 640, 960, 1268],
+  },
+  bitten: {
+    file: "apple_bitten.png",
+    widths: [320, 640, 720],
+  },
+  cracked: {
+    file: "Треснувшее красное яблоко на чёрном фоне.png",
+    widths: [320, 640, 960, 1254],
+  },
+} as const;
+
+type AppleVariant = keyof typeof APPLE_SOURCES;
+
 /**
- * Подготовка фото яблока от владельца: обрезка чёрных полей, прозрачный фон
- * (по яркости), WebP/PNG + версия с чёрным фоном.
+ * Чёрный фон у исходников почти идеальный (крайние пиксели ≤ 3).
+ * Вырезаем его мягкой альфой по максимуму канала, а кадр приводим
+ * к квадрату — тогда целое, надкусанное и треснувшее яблоки не прыгают
+ * при смене состояния.
  */
-async function prepareApplePhoto(): Promise<void> {
-  const source = resolve(here, "../../../assets/apple.jpg");
+async function keyedAppleSquare(
+  variant: AppleVariant,
+): Promise<{ data: Buffer; width: number; height: number }> {
+  const source = resolve(here, "../../../assets", APPLE_SOURCES[variant].file);
   if (!existsSync(source)) {
-    console.log("  · assets/apple.jpg не найден — фото яблока пропущено");
-    return;
+    throw new Error(`Не найден исходник яблока: assets/${APPLE_SOURCES[variant].file}`);
   }
 
   const { data, info } = await sharp(source)
-    .trim({ threshold: 12 })
     .ensureAlpha()
     .raw()
     .toBuffer({ resolveWithObject: true });
 
   const pixels = Buffer.from(data);
   for (let i = 0; i < pixels.length; i += 4) {
-    const r = pixels[i] ?? 0;
-    const g = pixels[i + 1] ?? 0;
-    const b = pixels[i + 2] ?? 0;
-    const luminance = Math.max(r, g, b) / 255;
-    const alpha = Math.min(1, Math.max(0, (luminance - 0.02) / 0.1));
+    const peak = Math.max(
+      pixels[i] ?? 0,
+      pixels[i + 1] ?? 0,
+      pixels[i + 2] ?? 0,
+    );
+    const alpha = Math.min(1, Math.max(0, (peak - 5) / 22));
     pixels[i + 3] = Math.round(alpha * 255);
   }
 
-  const rgba = sharp(pixels, {
+  const side = Math.max(info.width, info.height);
+  const left = Math.floor((side - info.width) / 2);
+  const top = Math.floor((side - info.height) / 2);
+
+  const square = await sharp(pixels, {
     raw: { width: info.width, height: info.height, channels: 4 },
-  });
+  })
+    .extend({
+      left,
+      right: side - info.width - left,
+      top,
+      bottom: side - info.height - top,
+      background: { r: 0, g: 0, b: 0, alpha: 0 },
+    })
+    .png()
+    .toBuffer();
 
-  await rgba
-    .clone()
-    .webp({ quality: 88, alphaQuality: 100 })
+  return { data: square, width: side, height: side };
+}
+
+async function prepareApples(): Promise<void> {
+  for (const variant of Object.keys(APPLE_SOURCES) as AppleVariant[]) {
+    const { data, width, height } = await keyedAppleSquare(variant);
+
+    for (const size of APPLE_SOURCES[variant].widths) {
+      const name = `apple-${variant}-${size}.webp`;
+      await sharp(data)
+        .resize(size, size, { fit: "fill" })
+        .webp({ quality: 90, alphaQuality: 100, effort: 6 })
+        .toFile(resolve(outDir, name));
+      console.log(`  + ${name} (${size}×${size})`);
+    }
+
+    console.log(`  · ${variant}: исходник ${width}×${height}`);
+  }
+
+  // Старые имена остаются как безопасный fallback для внешних ссылок.
+  const whole = await keyedAppleSquare("whole");
+  await sharp(whole.data)
+    .resize(640, 640)
+    .webp({ quality: 90, alphaQuality: 100, effort: 6 })
     .toFile(resolve(outDir, "apple-photo.webp"));
-  await rgba
-    .clone()
-    .png({ compressionLevel: 9 })
-    .toFile(resolve(outDir, "apple-photo.png"));
-  await sharp(source)
-    .trim({ threshold: 12 })
-    .webp({ quality: 88 })
-    .toFile(resolve(outDir, "apple-photo-black.webp"));
-
-  console.log(`  + apple-photo.webp (${info.width}×${info.height})`);
-  console.log("  + apple-photo.png");
-  console.log("  + apple-photo-black.webp");
+  const bitten = await keyedAppleSquare("bitten");
+  await sharp(bitten.data)
+    .resize(640, 640)
+    .webp({ quality: 90, alphaQuality: 100, effort: 6 })
+    .toFile(resolve(outDir, "apple-bitten.webp"));
+  console.log("  + apple-photo.webp / apple-bitten.webp (fallback aliases)");
 }
 
 async function prepareOg(): Promise<void> {
-  const applePath = resolve(outDir, "apple-photo.png");
+  const applePath = resolve(outDir, "apple-whole-640.webp");
   if (!existsSync(applePath)) return;
 
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630">
@@ -429,41 +484,18 @@ async function prepareHands(): Promise<void> {
   await saveHand(right, "hand-b.webp");
 }
 
-async function prepareBittenApple(): Promise<void> {
-  const source = resolve(outDir, "apple-photo.png");
-  if (!existsSync(source)) return;
+const HOVER_SOUND = "4_-no_yy-god-pre_raschenie-iz-plohih-_-horoshih.mp3";
 
-  const { data, info } = await sharp(source)
-    .ensureAlpha()
-    .raw()
-    .toBuffer({ resolveWithObject: true });
-
-  const pixels = Buffer.from(data);
-  const { width, height } = info;
-  const bites = [
-    { x: width * 0.86, y: height * 0.42, r: width * 0.27 },
-    { x: width * 0.79, y: height * 0.27, r: width * 0.17 },
-    { x: width * 0.79, y: height * 0.58, r: width * 0.17 },
-  ];
-
-  for (let y = 0; y < height; y += 1) {
-    for (let x = 0; x < width; x += 1) {
-      const inside = bites.some(
-        (bite) => (x - bite.x) ** 2 + (y - bite.y) ** 2 < bite.r ** 2,
-      );
-      if (inside) {
-        pixels[(y * width + x) * 4 + 3] = 0;
-      }
-    }
+/** Звук наведения на яблоко. Исходник владельца копируется как есть. */
+function prepareHoverSound(): void {
+  const source = resolve(here, "../../../assets", HOVER_SOUND);
+  if (!existsSync(source)) {
+    console.log(`  · ${HOVER_SOUND} не найден — звук наведения пропущен`);
+    return;
   }
 
-  await sharp(pixels, {
-    raw: { width, height, channels: 4 },
-  })
-    .webp({ quality: 88, alphaQuality: 100 })
-    .toFile(resolve(outDir, "apple-bitten.webp"));
-
-  console.log("  + apple-bitten.webp");
+  copyFileSync(source, resolve(audioDir, "apple-hover.mp3"));
+  console.log("  + audio/apple-hover.mp3");
 }
 
 async function main(): Promise<void> {
@@ -492,10 +524,10 @@ async function main(): Promise<void> {
   writeWav("drone.wav", makeDrone(1.6, 22050));
   writeWav("click.wav", makeClick(0.12, 22050));
 
-  await prepareApplePhoto();
-  await prepareBittenApple();
+  await prepareApples();
   await prepareOg();
   await prepareHands();
+  prepareHoverSound();
 
   console.log(
     "Готово. Это плейсхолдеры. Реальные ассеты — см. ASSETS_TODO.md (ASSET_NEEDED).",

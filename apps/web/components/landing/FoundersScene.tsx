@@ -7,6 +7,8 @@ import { cn, HoldButton, usePreferences } from "@loxrate/ui";
 import { useTransition } from "@/components/motion/TransitionProvider";
 import { founders as foundersContent } from "@/lib/content";
 
+import { AppleImage } from "./AppleImage";
+
 type FounderContent = {
   alias: string;
   role: string;
@@ -294,16 +296,20 @@ export function FoundersScene() {
         </div>
 
         <div className="founders-cta" data-cta data-visible="false">
-          <img
-            src="/assets/apple-photo.webp"
-            alt=""
-            width={84}
-            height={87}
+          <span
             className="apple-float founders-apple"
             data-end-apple
             data-visible="false"
-            draggable={false}
-          />
+            aria-hidden
+          >
+            <AppleImage
+              variant="whole"
+              sizes="84px"
+              width={84}
+              height={84}
+              className="founders-apple-image"
+            />
+          </span>
           <p className="font-mono text-[0.55rem] uppercase tracking-[0.35em] text-steel">
             Подвал ждёт
           </p>

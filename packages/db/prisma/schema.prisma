@@ -195,6 +195,7 @@ model User {
   updatedContent    ContentBlock[]
   friendsRequested  Friendship[]        @relation("FriendshipRequester")
   friendsReceived   Friendship[]        @relation("FriendshipAddressee")
+  quotes            UserQuote[]
 
   @@index([rank])
   @@map("users")
@@ -241,6 +242,17 @@ model Friendship {
   @@unique([requesterId, addresseeId])
   @@index([addresseeId, status])
   @@map("friendships")
+}
+
+model UserQuote {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  text      String
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([userId, createdAt])
+  @@map("user_quotes")
 }
 
 // ===========================================================================

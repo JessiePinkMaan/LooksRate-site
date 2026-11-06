@@ -14,6 +14,7 @@ import {
   PROFILE_BACKDROPS,
   PROFILE_ITEMS,
 } from "@/lib/profile-theme";
+import { QUOTE_LIMIT, checkQuote } from "@/lib/quote";
 
 const copy = profile.friends;
 
@@ -172,4 +173,51 @@ export async function removeFriendAction(formData: FormData): Promise<void> {
 
   revalidatePath("/me");
   redirect("/me");
+}
+
+// ---------------------------------------------------------------------------
+// Цитаты на профиле
+// ---------------------------------------------------------------------------
+
+const quotesCopy = profile.quotes;
+
+export type QuoteState = {
+  error?: string;
+  success?: boolean;
+};
+
+export async function addQuoteAction(
+  _previous: QuoteState,
+  formData: FormData,
+): Promise<QuoteState> {
+  const user = await requireUser();
+
+  const checked = checkQuote(formData.get("text"));
+  if (!checked.ok) {
+    return {
+      error:
+        checked.reason === "short" ? quotesCopy.tooShort : quotesCopy.tooLong,
+    };
+  }
+
+  const count = await prisma.userQuote.count({ where: { userId: user.id } });
+  if (count >= QUOTE_LIMIT) return { error: quotesCopy.tooMany };
+
+  await prisma.userQuote.create({
+    data: { userId: user.id, text: checked.text },
+  });
+
+  revalidatePath("/me");
+  return { success: true };
+}
+
+export async function deleteQuoteAction(formData: FormData): Promise<void> {
+  const user = await requireUser();
+  const id = String(formData.get("id") ?? "");
+
+  await prisma.userQuote.deleteMany({
+    where: { id, userId: user.id },
+  });
+
+  revalidatePath("/me");
 }

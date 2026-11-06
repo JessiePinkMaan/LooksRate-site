@@ -4,8 +4,8 @@ import { RivetedCard } from "@loxrate/ui";
 
 import { TLink } from "@/components/motion/TLink";
 import { FriendsPanel, type FriendRow } from "@/components/profile/FriendsPanel";
-import { ProfileCosmetics } from "@/components/profile/ProfileCosmetics";
-import { ProfileScene } from "@/components/profile/ProfileScene";
+import { ProfileStudio } from "@/components/profile/ProfileStudio";
+import { QuoteBoard, type QuoteRow } from "@/components/profile/QuoteBoard";
 import { requireUser } from "@/lib/auth";
 import { logoutAction } from "@/lib/auth-actions";
 import { profile } from "@/lib/content";
@@ -107,6 +107,7 @@ export default async function MePage({
     commentCount,
     ideaCount,
     friendships,
+    userQuotes,
   ] = await Promise.all([
     prisma.subscription.findMany({
       where: { userId: user.id },
@@ -145,6 +146,11 @@ export default async function MePage({
       include: { requester: true, addressee: true },
       orderBy: { createdAt: "desc" },
     }),
+    prisma.userQuote.findMany({
+      where: { userId: user.id },
+      orderBy: { createdAt: "desc" },
+      take: 12,
+    }),
   ]);
 
   const activeSubscription = subscriptions.find(
@@ -177,6 +183,15 @@ export default async function MePage({
 
   const theme = parseProfileTheme(user.profileTheme);
 
+  const quoteRows: QuoteRow[] = userQuotes.map((quote) => ({
+    id: quote.id,
+    text: quote.text,
+    date: quote.createdAt.toLocaleDateString("ru-RU", {
+      day: "numeric",
+      month: "short",
+    }),
+  }));
+
   return (
     <main className="mx-auto max-w-6xl px-6 pb-24 pt-10">
       <div className="flex flex-wrap items-end justify-between gap-4">
@@ -201,50 +216,56 @@ export default async function MePage({
         </form>
       </div>
 
-      <div className="mt-8">
-        <ProfileScene
-          user={{
-            name: displayName(user),
-            rank: user.rank,
-            theme,
-          }}
-          friends={sceneFriends}
-        />
-      </div>
+      <ProfileStudio
+        user={{
+          name: displayName(user),
+          rank: user.rank,
+          theme,
+        }}
+        friends={sceneFriends}
+        saved={saved === "1"}
+        quote={quoteRows[0]?.text}
+        stats={
+          <div className="mt-6 grid gap-4 sm:grid-cols-4">
+            <RivetedCard label={profile.stats.rank} number={`${user.xp} XP`}>
+              <p className="font-heading text-3xl uppercase">{user.rank}</p>
+            </RivetedCard>
+            <RivetedCard
+              label={profile.stats.streak}
+              number={profile.stats.days}
+            >
+              <p className="font-heading text-3xl uppercase">{user.streak}</p>
+            </RivetedCard>
+            <RivetedCard
+              label={profile.stats.access}
+              number={activeSubscription ? activeSubscription.tier.key : "T0"}
+            >
+              <p className="font-heading text-2xl uppercase">
+                {activeSubscription ? activeSubscription.tier.name : "Гость"}
+              </p>
+            </RivetedCard>
+            <RivetedCard label={profile.stats.xp} number="всего">
+              <p className="font-heading text-3xl uppercase">{user.xp}</p>
+            </RivetedCard>
+          </div>
+        }
+        friendsPanel={
+          <FriendsPanel
+            accepted={accepted.map((friendship) =>
+              toFriendRow(friendship, user.id),
+            )}
+            incoming={incoming.map((friendship) =>
+              toFriendRow(friendship, user.id),
+            )}
+            outgoing={outgoing.map((friendship) =>
+              toFriendRow(friendship, user.id),
+            )}
+          />
+        }
+      />
 
-      <div className="mt-6 grid gap-4 sm:grid-cols-4">
-        <RivetedCard label={profile.stats.rank} number={`${user.xp} XP`}>
-          <p className="font-heading text-3xl uppercase">{user.rank}</p>
-        </RivetedCard>
-        <RivetedCard label={profile.stats.streak} number={profile.stats.days}>
-          <p className="font-heading text-3xl uppercase">{user.streak}</p>
-        </RivetedCard>
-        <RivetedCard
-          label={profile.stats.access}
-          number={activeSubscription ? activeSubscription.tier.key : "T0"}
-        >
-          <p className="font-heading text-2xl uppercase">
-            {activeSubscription ? activeSubscription.tier.name : "Гость"}
-          </p>
-        </RivetedCard>
-        <RivetedCard label={profile.stats.xp} number="всего">
-          <p className="font-heading text-3xl uppercase">{user.xp}</p>
-        </RivetedCard>
-      </div>
-
-      <div className="mt-10 grid gap-5 lg:grid-cols-2">
-        <ProfileCosmetics theme={theme} saved={saved === "1"} />
-        <FriendsPanel
-          accepted={accepted.map((friendship) =>
-            toFriendRow(friendship, user.id),
-          )}
-          incoming={incoming.map((friendship) =>
-            toFriendRow(friendship, user.id),
-          )}
-          outgoing={outgoing.map((friendship) =>
-            toFriendRow(friendship, user.id),
-          )}
-        />
+      <div className="mt-12">
+        <QuoteBoard quotes={quoteRows} />
       </div>
 
       <section className="mt-12">

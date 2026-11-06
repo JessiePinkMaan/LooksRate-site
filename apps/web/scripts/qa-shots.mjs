@@ -231,7 +231,7 @@ async function main() {
       const page = await preparePage(browser, 1280, 960, {
         init: bypassLoader,
       });
-      await page.goto(`${baseUrl}/`, { waitUntil: "networkidle" });
+      await page.goto(`${baseUrl}/founders`, { waitUntil: "networkidle" });
       await waitForPage(page);
 
       const scrollFounders = async (ratio) => {

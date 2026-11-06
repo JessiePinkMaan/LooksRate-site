@@ -22,6 +22,7 @@ type ProfileSceneProps = {
     theme: ProfileTheme;
   };
   friends: SceneFriend[];
+  quote?: string;
 };
 
 /**
@@ -29,7 +30,7 @@ type ProfileSceneProps = {
  * Силуэт пользователя подсвечен золотом; друзья встают рядом со своим
  * светом и вещами и прячутся по кнопке.
  */
-export function ProfileScene({ user, friends }: ProfileSceneProps) {
+export function ProfileScene({ user, friends, quote }: ProfileSceneProps) {
   const [showFriends, setShowFriends] = useState(false);
   const half = Math.ceil(friends.length / 2);
   const left = friends.slice(0, half);
@@ -44,6 +45,10 @@ export function ProfileScene({ user, friends }: ProfileSceneProps) {
       <div className="profile-floor" aria-hidden />
       <div className="profile-lamp" aria-hidden />
       <div className="profile-light" aria-hidden />
+
+      {quote ? (
+        <blockquote className="profile-scene-quote">«{quote}»</blockquote>
+      ) : null}
 
       <div className="profile-scene-head">
         <span className="font-mono text-[0.55rem] uppercase tracking-[0.42em] text-steel">

@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { RivetedCard } from "@loxrate/ui";
 
 import { HeroApple } from "@/components/landing/HeroApple";
+import { ManifestScroll } from "@/components/landing/ManifestScroll";
 import { ThresholdGate } from "@/components/landing/ThresholdGate";
 import { TLink } from "@/components/motion/TLink";
 import { getSessionUser } from "@/lib/auth";
@@ -87,19 +88,28 @@ export default async function HomePage() {
 
           <HeroApple />
 
-          <h1 className="relative mt-6 font-heading text-[clamp(3rem,14vw,12rem)] uppercase leading-[0.82] tracking-[0.01em]">
+          <h1
+            data-intro-title
+            className="relative mt-6 pb-6 font-heading text-[clamp(3rem,14vw,12rem)] uppercase leading-[0.82] tracking-[0.01em] sm:pb-10"
+          >
             <span className="block">{heroFirst}</span>
             <span className="block -translate-x-2 sm:-translate-x-4">
               {heroRestLine}
             </span>
           </h1>
 
-          <p className="relative mt-8 max-w-md text-pretty text-sm leading-relaxed text-steel">
+          <p
+            data-intro-after
+            className="relative mt-8 max-w-md text-pretty text-sm leading-relaxed text-steel"
+          >
             Твой честный рейтинг и проводник в мир луксмаксинга. Смотри правде в
             лицо и работай над тем, что в твоей власти.
           </p>
 
-          <div className="relative mt-8 flex flex-wrap items-center justify-center gap-3">
+          <div
+            data-intro-after
+            className="relative mt-8 flex flex-wrap items-center justify-center gap-3"
+          >
             <TLink
               href="/vault"
               className="border border-blood bg-blood px-6 py-3 font-mono text-[0.65rem] uppercase tracking-[0.24em] text-ash transition-colors hover:bg-blood-deep"
@@ -114,6 +124,8 @@ export default async function HomePage() {
             </TLink>
           </div>
         </section>
+
+        <ManifestScroll />
 
         <section className="mx-auto max-w-6xl px-6 pb-24">
           <div className="mb-8 flex items-end justify-between gap-4">
