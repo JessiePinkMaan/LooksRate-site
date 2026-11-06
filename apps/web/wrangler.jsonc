@@ -11,7 +11,7 @@
   "hyperdrive": [
     {
       "binding": "HYPERDRIVE",
-      "id": "00000000000000000000000000000000",
+      "id": "af27774470b84926b5d0a5a04b5559a5",
       "localConnectionString": "postgresql://loxrate:loxrate@localhost:5432/loxrate?schema=public"
     }
   ],
