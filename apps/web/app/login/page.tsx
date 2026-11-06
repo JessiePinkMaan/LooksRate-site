@@ -1,12 +1,18 @@
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 
+import { AuthForm } from "@/components/auth/AuthForm";
 import { TLink } from "@/components/motion/TLink";
+import { getSessionUser } from "@/lib/auth";
 
 export const metadata: Metadata = {
   title: "Вход",
 };
 
-export default function LoginPage() {
+export default async function LoginPage() {
+  const user = await getSessionUser();
+  if (user) redirect("/me");
+
   const devEnabled =
     process.env.DEV_LOGIN === "true" &&
     process.env.NODE_ENV !== "production";
@@ -19,33 +25,24 @@ export default function LoginPage() {
       <h1 className="mt-4 font-heading text-5xl uppercase leading-[0.95]">
         Вход
       </h1>
-      <p className="mt-4 text-sm leading-relaxed text-steel">
-        Вход через Telegram появится, когда будет подключён отдельный бот
-        (`@loxrate_auth_bot`). Пока доступен dev-вход с тестовым персонажем —
-        он создаёт реальную сессию в базе.
-      </p>
 
-      <button
-        type="button"
-        disabled
-        className="mt-8 block w-full border border-graphite bg-concrete px-5 py-4 font-mono text-[0.65rem] uppercase tracking-[0.24em] text-steel opacity-60"
-      >
-        Войти через Telegram — скоро
-      </button>
+      <div className="mt-8 border border-graphite bg-concrete p-6">
+        <AuthForm initialMode="login" />
+      </div>
 
       {devEnabled ? (
-        <TLink
-          href="/dev/login"
-          className="mt-3 block w-full border border-blood bg-blood px-5 py-4 text-center font-mono text-[0.65rem] uppercase tracking-[0.24em] text-ash transition-colors hover:bg-blood-deep"
-        >
-          Dev-вход
-        </TLink>
+        <div className="mt-6 border border-graphite/60 p-4">
+          <p className="font-mono text-[0.55rem] uppercase tracking-[0.24em] text-steel">
+            Dev-доступ
+          </p>
+          <TLink
+            href="/dev/login"
+            className="mt-2 inline-block font-mono text-[0.6rem] uppercase tracking-[0.2em] text-ember transition-colors hover:text-ash"
+          >
+            Войти тестовым персонажем →
+          </TLink>
+        </div>
       ) : null}
-
-      <p className="mt-6 text-xs leading-relaxed text-steel">
-        18+. Продолжая, ты подтверждаешь, что тебе есть 18. Это игра и
-        инструмент, а не диагноз и не приговор.
-      </p>
     </main>
   );
 }

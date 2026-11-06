@@ -34,6 +34,12 @@ enum AccountProvider {
   TELEGRAM
 }
 
+enum FriendshipStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+}
+
 enum VideoStatus {
   UPLOADING
   QUEUED
@@ -147,10 +153,12 @@ enum ReportStatus {
 model User {
   id              String     @id @default(cuid())
   tgId            String?    @unique @map("tg_id")
-  username        String?
+  username        String?    @unique
+  passwordHash    String?    @map("password_hash")
   displayName     String?    @map("display_name")
   avatarKey       String?    @map("avatar_key")
   bio             String?
+  profileTheme    Json?      @map("profile_theme")
   role            Role       @default(USER)
   rank            String     @default("R1")
   xp              Int        @default(0)
@@ -185,6 +193,8 @@ model User {
   bansIssued        Ban[]               @relation("BannedBy")
   createdVideos     Video[]             @relation("VideoAuthor")
   updatedContent    ContentBlock[]
+  friendsRequested  Friendship[]        @relation("FriendshipRequester")
+  friendsReceived   Friendship[]        @relation("FriendshipAddressee")
 
   @@index([rank])
   @@map("users")
@@ -216,6 +226,21 @@ model Account {
   @@unique([provider, providerId])
   @@index([userId])
   @@map("accounts")
+}
+
+model Friendship {
+  id          String           @id @default(cuid())
+  requesterId String           @map("requester_id")
+  requester   User             @relation("FriendshipRequester", fields: [requesterId], references: [id], onDelete: Cascade)
+  addresseeId String           @map("addressee_id")
+  addressee   User             @relation("FriendshipAddressee", fields: [addresseeId], references: [id], onDelete: Cascade)
+  status      FriendshipStatus @default(PENDING)
+  createdAt   DateTime         @default(now()) @map("created_at")
+  respondedAt DateTime?        @map("responded_at")
+
+  @@unique([requesterId, addresseeId])
+  @@index([addresseeId, status])
+  @@map("friendships")
 }
 
 // ===========================================================================

@@ -339,6 +339,885 @@ html[data-effects="off"] .apple-float {
 }
 
 /* ---------------------------------------------------------------------------
+ * Врата входа: большое яблоко, цитаты, мягкий вход (комната 00)
+ * ------------------------------------------------------------------------- */
+
+.threshold-gate {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  display: block;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: #030303;
+  overscroll-behavior: contain;
+  transition: background-color 900ms ease 260ms;
+}
+
+.threshold-gate[data-phase="exit"] {
+  background: transparent;
+}
+
+.threshold-backdrop {
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(
+      circle at 50% 36%,
+      rgba(201, 162, 39, 0.12) 0%,
+      transparent 42%
+    ),
+    radial-gradient(
+      circle at 50% 52%,
+      #0a0a0b 0%,
+      #050505 46%,
+      #030303 100%
+    );
+  transition: opacity 1200ms ease 120ms;
+}
+
+.threshold-gate[data-phase="exit"] .threshold-backdrop {
+  opacity: 0;
+}
+
+.threshold-aura {
+  position: fixed;
+  left: 50%;
+  top: 36%;
+  width: min(76vw, 760px);
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  border-radius: 9999px;
+  background: radial-gradient(
+    circle,
+    rgba(255, 232, 164, 0.42) 0%,
+    rgba(201, 162, 39, 0.22) 26%,
+    rgba(179, 18, 27, 0.06) 48%,
+    transparent 70%
+  );
+  opacity: 0.55;
+  filter: blur(14px);
+  pointer-events: none;
+  animation: threshold-breathe 6.5s ease-in-out infinite;
+}
+
+.threshold-gate[data-phase="exit"] .threshold-aura {
+  animation: threshold-burst 1.45s cubic-bezier(0.2, 0.7, 0.3, 1) forwards;
+}
+
+@keyframes threshold-breathe {
+  0%,
+  100% {
+    opacity: 0.45;
+    transform: translate(-50%, -50%) scale(0.96);
+  }
+  50% {
+    opacity: 0.68;
+    transform: translate(-50%, -50%) scale(1.04);
+  }
+}
+
+@keyframes threshold-burst {
+  0% {
+    opacity: 0.6;
+    transform: translate(-50%, -50%) scale(0.9);
+  }
+  45% {
+    opacity: 0.95;
+    transform: translate(-50%, -50%) scale(1.9);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(3.4);
+  }
+}
+
+.threshold-grain {
+  position: fixed;
+  inset: 0;
+  background-image: url("/assets/grain.svg");
+  background-size: 220px 220px;
+  opacity: 0.07;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+}
+
+.threshold-stage {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  min-height: 100svh;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.75rem;
+  padding: 5vh 1.5rem 7vh;
+}
+
+.threshold-apple {
+  display: block;
+  width: clamp(220px, 44vw, 430px);
+  flex: 0 0 auto;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  cursor: default;
+  animation: apple-float 7s ease-in-out infinite;
+  transition:
+    width 700ms cubic-bezier(0.16, 1, 0.3, 1),
+    filter 600ms ease;
+  filter: drop-shadow(0 0 48px rgba(201, 162, 39, 0.32))
+    drop-shadow(0 28px 60px rgba(0, 0, 0, 0.8));
+}
+
+.threshold-gate[data-phase="sealed"] .threshold-apple,
+.threshold-gate[data-phase="choice"] .threshold-apple {
+  cursor: pointer;
+}
+
+.threshold-gate[data-phase="sealed"] .threshold-apple:hover,
+.threshold-gate[data-phase="sealed"] .threshold-apple:focus-visible {
+  filter: drop-shadow(0 0 40px rgba(255, 232, 164, 0.6))
+    drop-shadow(0 0 110px rgba(201, 162, 39, 0.45))
+    drop-shadow(0 28px 60px rgba(0, 0, 0, 0.8));
+}
+
+.threshold-apple[data-compact="true"] {
+  width: clamp(126px, 18vw, 196px);
+}
+
+.threshold-apple[data-spin="true"] {
+  animation: threshold-spin 1.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes threshold-spin {
+  0% {
+    transform: translateY(0) scale(1) rotate(0deg);
+    filter: drop-shadow(0 0 48px rgba(255, 232, 164, 0.5))
+      drop-shadow(0 0 120px rgba(201, 162, 39, 0.4));
+  }
+  30% {
+    transform: translateY(-4vh) scale(1.14) rotate(190deg);
+    filter: drop-shadow(0 0 70px rgba(255, 236, 170, 0.9))
+      drop-shadow(0 0 180px rgba(201, 162, 39, 0.7));
+  }
+  70% {
+    transform: translateY(-9vh) scale(0.88) rotate(500deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-15vh) scale(0.26) rotate(720deg);
+    opacity: 0;
+  }
+}
+
+.threshold-apple img {
+  display: block;
+  width: 100%;
+  height: auto;
+  pointer-events: none;
+}
+
+.threshold-copy {
+  width: min(92vw, 44rem);
+  text-align: center;
+  transition:
+    opacity 420ms ease,
+    transform 420ms ease;
+}
+
+.threshold-copy[data-visible="false"] {
+  opacity: 0;
+  transform: translateY(10px);
+  pointer-events: none;
+}
+
+.threshold-quote {
+  margin: 0 auto;
+  max-width: 38rem;
+  animation: threshold-quote-in 700ms ease both;
+}
+
+@keyframes threshold-quote-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.threshold-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin-top: 2.4rem;
+  border: 0;
+  background: transparent;
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--color-steel);
+  cursor: pointer;
+  transition: color 300ms ease;
+}
+
+.threshold-hint:hover,
+.threshold-hint:focus-visible {
+  color: var(--color-ash);
+}
+
+.threshold-hint-dot {
+  display: block;
+  width: 5px;
+  height: 5px;
+  border-radius: 9999px;
+  background: var(--color-gold-apple);
+  box-shadow: 0 0 12px rgba(201, 162, 39, 0.8);
+  animation: threshold-dot 2.6s ease-in-out infinite;
+}
+
+@keyframes threshold-dot {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: scale(0.85);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+}
+
+.threshold-choice {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 2.2rem;
+  animation: threshold-choice-in 500ms ease both;
+}
+
+@keyframes threshold-choice-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.threshold-button {
+  min-width: 10rem;
+  border: 1px solid var(--color-graphite);
+  background: rgba(19, 19, 21, 0.7);
+  padding: 0.85rem 1.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--color-ash);
+  transition:
+    border-color 300ms ease,
+    background-color 300ms ease,
+    color 300ms ease;
+}
+
+.threshold-button:hover,
+.threshold-button:focus-visible {
+  border-color: var(--color-gold-apple);
+  color: var(--color-gold-apple);
+}
+
+.threshold-button-primary {
+  border-color: rgba(201, 162, 39, 0.55);
+  background: rgba(201, 162, 39, 0.12);
+  color: var(--color-gold-apple);
+}
+
+.threshold-button-primary:hover,
+.threshold-button-primary:focus-visible {
+  background: rgba(201, 162, 39, 0.22);
+  color: #f0d38a;
+}
+
+.threshold-guest {
+  flex-basis: 100%;
+  margin-top: 0.9rem;
+  border: 0;
+  background: transparent;
+  font-family: var(--font-mono);
+  font-size: 0.5rem;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--color-steel);
+  transition: color 300ms ease;
+}
+
+.threshold-guest:hover,
+.threshold-guest:focus-visible {
+  color: var(--color-ash);
+}
+
+.threshold-form {
+  margin: 0 auto;
+  width: min(92vw, 24rem);
+}
+
+.threshold-gate[data-phase="exit"] {
+  pointer-events: none;
+}
+
+.threshold-gate[data-phase="exit"] .threshold-copy {
+  opacity: 0;
+  transition-duration: 220ms;
+}
+
+@media (max-width: 640px) {
+  .threshold-stage {
+    gap: 1.25rem;
+    padding: 4vh 1.25rem 6vh;
+  }
+  .threshold-apple {
+    width: clamp(210px, 62vw, 300px);
+  }
+  .threshold-apple[data-compact="true"] {
+    width: clamp(104px, 30vw, 140px);
+  }
+  .threshold-choice {
+    flex-direction: column;
+  }
+  .threshold-button {
+    width: 100%;
+    min-width: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .threshold-aura,
+  .threshold-apple,
+  .threshold-hint-dot {
+    animation: none;
+  }
+  .threshold-gate[data-phase="exit"] .threshold-aura {
+    animation: none;
+    opacity: 0;
+  }
+  .threshold-apple[data-spin="true"] {
+    animation: none;
+    opacity: 0;
+    transition: opacity 300ms ease;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * Профиль: один силуэт в свете лампы, друзья рядом
+ * ------------------------------------------------------------------------- */
+
+.profile-scene {
+  position: relative;
+  display: flex;
+  min-height: clamp(430px, 54vw, 620px);
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--color-graphite);
+  background: #030303;
+}
+
+.profile-floor {
+  position: absolute;
+  inset: 0;
+  background-image: url("/assets/concrete.svg");
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  opacity: 0.5;
+  filter: brightness(0.6) contrast(1.08);
+  transition: opacity 500ms ease;
+}
+
+.profile-scene[data-backdrop="void"] .profile-floor {
+  opacity: 0.12;
+}
+
+.profile-scene[data-backdrop="gold"] .profile-floor {
+  opacity: 0.28;
+  filter: brightness(0.7) sepia(0.5) contrast(1.1);
+}
+
+.profile-lamp {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at 50% 62%,
+    rgba(233, 228, 218, 0.28) 0%,
+    rgba(201, 162, 39, 0.16) 18%,
+    rgba(201, 162, 39, 0.04) 38%,
+    transparent 64%
+  );
+  transition: background 500ms ease;
+}
+
+.profile-scene[data-backdrop="gold"] .profile-lamp {
+  background: radial-gradient(
+    circle at 50% 60%,
+    rgba(255, 232, 164, 0.4) 0%,
+    rgba(201, 162, 39, 0.22) 22%,
+    rgba(201, 162, 39, 0.06) 44%,
+    transparent 70%
+  );
+}
+
+.profile-scene[data-backdrop="void"] .profile-lamp {
+  opacity: 0.55;
+}
+
+.profile-light {
+  position: absolute;
+  left: 50%;
+  top: 4%;
+  width: 46%;
+  height: 82%;
+  transform: translateX(-50%);
+  background: linear-gradient(
+    to bottom,
+    rgba(233, 228, 218, 0.08),
+    rgba(201, 162, 39, 0.05) 40%,
+    transparent 78%
+  );
+  filter: blur(18px);
+  pointer-events: none;
+}
+
+.profile-scene-head {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem 0;
+}
+
+.profile-camera {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex: 1;
+  align-items: flex-end;
+  justify-content: center;
+  gap: clamp(10px, 2.4vw, 42px);
+  padding: 1rem 2vw 5.4rem;
+}
+
+.profile-friend-cluster {
+  display: flex;
+  flex: 0 1 auto;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: clamp(4px, 0.8vw, 12px);
+  max-width: 27%;
+  transition:
+    opacity 450ms ease,
+    transform 450ms ease;
+}
+
+.profile-friend-cluster-left {
+  justify-content: flex-end;
+}
+
+.profile-friend-cluster-right {
+  justify-content: flex-start;
+}
+
+.profile-friend-cluster[data-visible="false"] {
+  opacity: 0;
+  transform: translateY(10px) scale(0.94);
+  pointer-events: none;
+}
+
+.profile-friend-cluster[data-visible="true"] {
+  opacity: 1;
+  transform: none;
+}
+
+.profile-figure {
+  position: relative;
+  margin: 0;
+  width: clamp(48px, 6.4vw, 92px);
+}
+
+.profile-figure-self {
+  width: clamp(104px, 14vw, 186px);
+  filter: drop-shadow(0 0 22px rgba(201, 162, 39, 0.42))
+    drop-shadow(0 30px 36px rgba(0, 0, 0, 0.85));
+}
+
+.profile-figure-aura {
+  position: absolute;
+  left: 50%;
+  top: 4%;
+  z-index: -1;
+  width: 210%;
+  height: 102%;
+  transform: translateX(-50%);
+  border-radius: 9999px;
+  filter: blur(26px);
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.profile-figure[data-aura="gold"] .profile-figure-aura {
+  background: radial-gradient(
+    ellipse at 50% 55%,
+    rgba(201, 162, 39, 0.55) 0%,
+    transparent 70%
+  );
+}
+
+.profile-figure[data-aura="blood"] .profile-figure-aura {
+  background: radial-gradient(
+    ellipse at 50% 55%,
+    rgba(179, 18, 27, 0.5) 0%,
+    transparent 70%
+  );
+}
+
+.profile-figure[data-aura="steel"] .profile-figure-aura {
+  background: radial-gradient(
+    ellipse at 50% 55%,
+    rgba(127, 132, 142, 0.5) 0%,
+    transparent 70%
+  );
+}
+
+.profile-figure[data-aura="void"] .profile-figure-aura {
+  background: radial-gradient(
+    ellipse at 50% 55%,
+    rgba(233, 228, 218, 0.18) 0%,
+    transparent 68%
+  );
+}
+
+.profile-figure-body {
+  position: relative;
+  width: 100%;
+}
+
+.profile-figure-body img {
+  display: block;
+  width: 100%;
+  height: auto;
+  pointer-events: none;
+  filter: brightness(0.92) contrast(1.04);
+}
+
+.profile-figure[data-variant="self"] .profile-figure-body img {
+  filter: brightness(1.02) contrast(1.02)
+    drop-shadow(0 0 10px rgba(201, 162, 39, 0.28));
+}
+
+.profile-figure-caption {
+  display: block;
+  margin-top: 0.55rem;
+  text-align: center;
+}
+
+.profile-figure-name {
+  display: block;
+  overflow: hidden;
+  font-family: var(--font-heading);
+  font-size: 0.72rem;
+  line-height: 1.1;
+  letter-spacing: 0.08em;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--color-steel);
+}
+
+.profile-figure-self .profile-figure-name {
+  font-size: 1rem;
+  color: var(--color-gold-apple);
+}
+
+.profile-figure-rank {
+  display: block;
+  margin-top: 0.1rem;
+  font-family: var(--font-mono);
+  font-size: 0.42rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(127, 132, 142, 0.7);
+}
+
+.profile-figure-self .profile-figure-rank {
+  color: var(--color-steel);
+}
+
+/* Вещи поверх силуэта: шляпа, шарф, плащ, цепь. */
+.profile-item {
+  position: absolute;
+  pointer-events: none;
+}
+
+.profile-item-hat {
+  left: 50%;
+  top: 0.5%;
+  width: 56%;
+  height: 6.5%;
+  transform: translateX(-50%);
+  border: 1px solid rgba(201, 162, 39, 0.35);
+  border-radius: 44% 44% 10% 10%;
+  background: linear-gradient(180deg, #1d1d22, #0b0b0d);
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.65);
+}
+
+.profile-item-hat::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -38%;
+  width: 150%;
+  height: 40%;
+  transform: translateX(-50%);
+  border-radius: 9999px;
+  border: 1px solid rgba(201, 162, 39, 0.22);
+  background: linear-gradient(180deg, #16161a, #08080a);
+}
+
+.profile-item-scarf {
+  left: 50%;
+  top: 21.5%;
+  width: 42%;
+  height: 3.4%;
+  transform: translateX(-50%) rotate(-1.5deg);
+  border-radius: 9999px;
+  background: linear-gradient(
+    90deg,
+    rgba(110, 10, 16, 0.95),
+    rgba(179, 18, 27, 0.9),
+    rgba(110, 10, 16, 0.95)
+  );
+  box-shadow: 0 3px 8px rgba(179, 18, 27, 0.35);
+}
+
+.profile-item-scarf::after {
+  content: "";
+  position: absolute;
+  left: 62%;
+  top: 70%;
+  width: 26%;
+  height: 220%;
+  border-radius: 0 0 9999px 9999px;
+  background: linear-gradient(
+    180deg,
+    rgba(179, 18, 27, 0.85),
+    rgba(110, 10, 16, 0.95)
+  );
+  transform: rotate(7deg);
+}
+
+.profile-item-coat {
+  left: 50%;
+  top: 21%;
+  width: 94%;
+  height: 43%;
+  transform: translateX(-50%);
+  background: linear-gradient(
+    180deg,
+    rgba(24, 24, 28, 0.98),
+    rgba(8, 8, 10, 0.98)
+  );
+  border-left: 1px solid rgba(201, 162, 39, 0.16);
+  border-right: 1px solid rgba(201, 162, 39, 0.16);
+  clip-path: polygon(18% 0, 82% 0, 100% 100%, 0 100%);
+}
+
+.profile-item-coat::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 1px;
+  height: 100%;
+  background: rgba(201, 162, 39, 0.22);
+}
+
+.profile-item-chain {
+  left: 50%;
+  top: 27%;
+  width: 12%;
+  aspect-ratio: 1;
+  transform: translateX(-50%);
+  border: 1px solid rgba(201, 162, 39, 0.65);
+  border-radius: 9999px;
+  background: radial-gradient(
+    circle,
+    rgba(201, 162, 39, 0.45),
+    rgba(201, 162, 39, 0.08) 65%,
+    transparent 70%
+  );
+  box-shadow: 0 0 12px rgba(201, 162, 39, 0.4);
+}
+
+.profile-scene-foot {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem 1rem;
+  background: linear-gradient(to top, rgba(3, 3, 3, 0.92), transparent);
+  text-align: center;
+}
+
+.profile-friends-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  border: 1px solid var(--color-graphite);
+  background: rgba(10, 10, 11, 0.7);
+  padding: 0.55rem 0.9rem;
+  font-family: var(--font-mono);
+  font-size: 0.5rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--color-steel);
+  transition:
+    border-color 300ms ease,
+    color 300ms ease;
+}
+
+.profile-friends-toggle:hover,
+.profile-friends-toggle:focus-visible {
+  border-color: var(--color-gold-apple);
+  color: var(--color-gold-apple);
+}
+
+.profile-friends-count {
+  display: inline-flex;
+  min-width: 1.2rem;
+  justify-content: center;
+  border-left: 1px solid var(--color-graphite);
+  padding-left: 0.5rem;
+  color: var(--color-gold-apple);
+}
+
+.profile-friend-dot {
+  display: block;
+  width: 7px;
+  height: 7px;
+  flex: 0 0 auto;
+  border-radius: 9999px;
+  box-shadow: 0 0 10px currentColor;
+}
+
+.profile-friend-dot[data-aura="gold"] {
+  background: var(--color-gold-apple);
+  color: rgba(201, 162, 39, 0.7);
+}
+
+.profile-friend-dot[data-aura="blood"] {
+  background: var(--color-blood);
+  color: rgba(179, 18, 27, 0.7);
+}
+
+.profile-friend-dot[data-aura="steel"] {
+  background: var(--color-steel);
+  color: rgba(127, 132, 142, 0.6);
+}
+
+.profile-friend-dot[data-aura="void"] {
+  background: var(--color-ash);
+  color: rgba(233, 228, 218, 0.4);
+}
+
+.theme-option {
+  cursor: pointer;
+}
+
+.theme-option span {
+  display: block;
+  border: 1px solid var(--color-graphite);
+  background: rgba(10, 10, 11, 0.65);
+  padding: 0.42rem 0.7rem;
+  font-family: var(--font-mono);
+  font-size: 0.5rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--color-steel);
+  transition:
+    border-color 250ms ease,
+    background-color 250ms ease,
+    color 250ms ease;
+}
+
+.theme-option:hover span {
+  border-color: rgba(201, 162, 39, 0.35);
+  color: var(--color-ash);
+}
+
+.theme-option input:checked + span {
+  border-color: rgba(201, 162, 39, 0.6);
+  background: rgba(201, 162, 39, 0.12);
+  color: var(--color-gold-apple);
+}
+
+.theme-option input:focus-visible + span {
+  outline: 2px solid var(--color-blood);
+  outline-offset: 2px;
+}
+
+@media (max-width: 768px) {
+  .profile-scene {
+    min-height: 400px;
+  }
+  .profile-camera {
+    gap: 6px;
+    padding: 0.5rem 1vw 5rem;
+  }
+  .profile-figure {
+    width: 44px;
+  }
+  .profile-figure-self {
+    width: 122px;
+  }
+  .profile-friend-cluster {
+    max-width: 26%;
+    gap: 3px;
+  }
+  .profile-figure-caption {
+    margin-top: 0.3rem;
+  }
+  .profile-figure-name {
+    font-size: 0.55rem;
+  }
+  .profile-figure-self .profile-figure-name {
+    font-size: 0.8rem;
+  }
+  .profile-figure-rank {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .profile-friend-cluster {
+    transition: opacity 200ms ease;
+    transform: none;
+  }
+}
+
+/* ---------------------------------------------------------------------------
  * Флагманская сцена «Основатели» (ТЗ §7)
  * ------------------------------------------------------------------------- */
 

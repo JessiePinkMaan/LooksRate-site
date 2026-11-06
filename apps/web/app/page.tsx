@@ -2,9 +2,10 @@ import type { Metadata } from "next";
 
 import { RivetedCard } from "@loxrate/ui";
 
-import { ThresholdLoader } from "@/components/landing/ThresholdLoader";
 import { HeroApple } from "@/components/landing/HeroApple";
+import { ThresholdGate } from "@/components/landing/ThresholdGate";
 import { TLink } from "@/components/motion/TLink";
+import { getSessionUser } from "@/lib/auth";
 import { codex, slogans } from "@/lib/content";
 
 export const metadata: Metadata = {
@@ -60,13 +61,14 @@ const CHANNEL = "https://t.me/loxrating";
 const BOT = "https://t.me/loxrate_bot";
 const CONTACT = "https://t.me/retawum";
 
-export default function HomePage() {
+export default async function HomePage() {
+  const user = await getSessionUser();
   const [heroFirst, ...heroRest] = slogans.slogan.main.split(" ");
   const heroRestLine = heroRest.join(" ");
 
   return (
     <>
-      <ThresholdLoader />
+      <ThresholdGate initiallyEntered={Boolean(user)} />
 
       <main>
         <section className="relative flex min-h-[86svh] flex-col items-center justify-center overflow-hidden px-6 py-20 text-center">

@@ -1,5 +1,6 @@
 import achievements from "../../../content/ru/achievements.json";
 import codex from "../../../content/ru/codex.json";
+import entry from "../../../content/ru/entry.json";
 import faq from "../../../content/ru/faq.json";
 import feed from "../../../content/ru/telegram-feed.fixture.json";
 import founders from "../../../content/ru/founders.json";
@@ -7,6 +8,7 @@ import glossary from "../../../content/ru/glossary.json";
 import legal from "../../../content/ru/legal.json";
 import manifest from "../../../content/ru/manifest.json";
 import microcopy from "../../../content/ru/microcopy.json";
+import profile from "../../../content/ru/profile.json";
 import quests from "../../../content/ru/quests.json";
 import ranks from "../../../content/ru/ranks.json";
 import slogans from "../../../content/ru/slogans.json";
@@ -20,6 +22,7 @@ import vaultPreview from "../../../content/ru/vault-preview.json";
 export {
   achievements,
   codex,
+  entry,
   faq,
   feed,
   founders,
@@ -27,6 +30,7 @@ export {
   legal,
   manifest,
   microcopy,
+  profile,
   quests,
   ranks,
   slogans,
