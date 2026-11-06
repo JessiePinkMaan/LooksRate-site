@@ -102,7 +102,6 @@ export function ThresholdGate({
   const finishIntro = (): void => {
     document.documentElement.removeAttribute("data-intro");
     setPhase("done");
-    router.refresh();
   };
 
   const enterSite = (): void => {
@@ -113,6 +112,10 @@ export function ThresholdGate({
     } catch {
       /* без sessionStorage вход всё равно работает */
     }
+
+    // Обновляем серверную шапку заранее, чтобы во время интро уже был
+    // правильный пользователь, а не «Войти» из старого рендера.
+    router.refresh();
 
     const motionOff =
       reduce ||
