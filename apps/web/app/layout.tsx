@@ -12,7 +12,6 @@ import "@fontsource/cormorant-garamond/500.css";
 import "@fontsource/cormorant-garamond/400-italic.css";
 
 import {
-  CustomCursor,
   EffectsProvider,
   EffectsToggle,
   SoundToggle,
@@ -101,7 +100,6 @@ export default function RootLayout({
         <SmoothScroll>
           <TransitionProvider>
             <EffectsProvider />
-            <CustomCursor />
             <div className="concrete-overlay" aria-hidden />
             <div className="grain-overlay" aria-hidden />
             <div className="vignette-overlay" aria-hidden />

@@ -37,6 +37,5 @@ export type { HoldButtonProps } from "./components/HoldButton";
 export { RivetedCard } from "./components/RivetedCard";
 export type { RivetedCardProps } from "./components/RivetedCard";
 export { BeltDivider } from "./components/BeltDivider";
-export { CustomCursor } from "./components/CustomCursor";
 export { EffectsToggle } from "./components/EffectsToggle";
 export { SoundToggle } from "./components/SoundToggle";

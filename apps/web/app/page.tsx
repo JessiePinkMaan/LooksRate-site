@@ -48,6 +48,12 @@ const rooms = [
     href: "/access",
     text: "Уровни T0–T4 и что внутри.",
   },
+  {
+    n: "07",
+    title: "Зал",
+    href: "/hall",
+    text: "Топ по XP, идея месяца и признание клуба.",
+  },
 ];
 
 const CHANNEL = "https://t.me/loxrating";

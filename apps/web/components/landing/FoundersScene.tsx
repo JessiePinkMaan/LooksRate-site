@@ -295,12 +295,14 @@ export function FoundersScene() {
 
         <div className="founders-cta" data-cta data-visible="false">
           <img
-            src="/assets/apple.svg"
+            src="/assets/apple-photo.webp"
             alt=""
-            width={48}
-            height={48}
+            width={84}
+            height={87}
+            className="apple-float founders-apple"
             data-end-apple
             data-visible="false"
+            draggable={false}
           />
           <p className="font-mono text-[0.55rem] uppercase tracking-[0.35em] text-steel">
             Подвал ждёт

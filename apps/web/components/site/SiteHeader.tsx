@@ -3,14 +3,11 @@ import { getSessionUser } from "@/lib/auth";
 import { logoutAction } from "@/lib/auth-actions";
 
 const NAV = [
-  ["Манифест", "/manifest"],
   ["Основатели", "/founders"],
   ["Лор", "/lore"],
   ["Ранги", "/ranks"],
   ["Видео", "/vault"],
   ["Идеи", "/ideas"],
-  ["Зал", "/hall"],
-  ["Доступ", "/access"],
 ] as const;
 
 export async function SiteHeader() {
