@@ -4,8 +4,9 @@
 на сервере; `.env` и `backups/` в git не попадают.
 
 Нужен бесплатный публичный стенд (Oracle Always Free + DuckDNS)? Пошагово:
-[`DEPLOY_FREE.md`](DEPLOY_FREE.md). Ниже - универсальный чек-лист для любого
-Docker-хоста.
+[`DEPLOY_FREE.md`](DEPLOY_FREE.md). Хочешь без сервера, на Cloudflare Workers
+(видео при этом отключено)? [`DEPLOY_CLOUDFLARE.md`](DEPLOY_CLOUDFLARE.md).
+Ниже - универсальный чек-лист для любого Docker-хоста.
 
 ## 0. Что нужно
 

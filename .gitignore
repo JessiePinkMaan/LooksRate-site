@@ -38,6 +38,12 @@ storage/
 # turbo
 .turbo/
 
+# cloudflare workers
+.open-next/
+.wrangler/
+.dev.vars
+.cloudflare/
+
 # misc
 .DS_Store
 Thumbs.db

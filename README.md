@@ -176,6 +176,7 @@ pnpm assets:generate
 | `pnpm db:migrate` / `db:seed` / `db:reset` | миграции, сиды, сброс |
 | `pnpm db:backup` | pg_dump в `backups/` |
 | `pnpm db:promote <username>` | выдать пользователю роль `OWNER` |
+| `pnpm cf:build` / `cf:deploy` | сборка и деплой Cloudflare Workers (см. `docs/DEPLOY_CLOUDFLARE.md`) |
 | `pnpm assets:generate` | WebP/ассеты из исходников |
 | `pnpm qa:shots` | скриншоты страниц |
 | `pnpm qa:a11y` | axe-аудит |
@@ -214,6 +215,8 @@ pnpm qa:a11y
 - [`docs/DEPLOY.md`](docs/DEPLOY.md) - универсальный чек-лист для Docker-хоста.
 - [`docs/DEPLOY_FREE.md`](docs/DEPLOY_FREE.md) - бесплатная публичная ссылка:
   Oracle Cloud Always Free + DuckDNS или временный туннель с домашнего ПК.
+- [`docs/DEPLOY_CLOUDFLARE.md`](docs/DEPLOY_CLOUDFLARE.md) - Cloudflare Workers
+  + Neon + Hyperdrive: бесплатный `*.workers.dev`, видео временно отключено.
 - шаблон: `.env.production.example`
 - `docker compose -f docker-compose.prod.yml ...`
 - optional Caddy-профиль: `deploy/Caddyfile`
@@ -225,6 +228,8 @@ pnpm qa:a11y
   worker не входит в production-стек.
 - Оплата тарифов не подключена; T0-T4 показываются как «Скоро».
 - S3/MinIO подготовлены, но видео R1 пишет в локальный volume.
+- В Cloudflare-варианте видео временно отключено: для него нужен R2 и
+  presigned-загрузка.
 - Rate limit логина in-memory; при горизонтальном масштабировании нужен Redis.
 - Sentry-переменная зарезервирована, SDK ещё не подключён.
 
@@ -236,5 +241,6 @@ pnpm qa:a11y
 - `ASSETS_TODO.md` - что ещё нужно от владельца.
 - `docs/DEPLOY.md` - деплой.
 - `docs/DEPLOY_FREE.md` - бесплатный публичный стенд.
+- `docs/DEPLOY_CLOUDFLARE.md` - Cloudflare Workers.
 - `docs/QA_AND_RISKS.md` - QA и риски.
 - `CHANGELOG.md` - изменения по фазам.

@@ -8,6 +8,7 @@ import { NextResponse } from "next/server";
 
 import { getSessionUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { isWorkersDeployment } from "@/lib/runtime";
 import { resolveStorageFile, videosDir } from "@/lib/storage";
 
 const MAX_BYTES = 512 * 1024 * 1024;
@@ -22,6 +23,14 @@ export async function POST(
   const user = await getSessionUser();
   if (!user || (user.role !== "OWNER" && user.role !== "ADMIN")) {
     return NextResponse.json({ error: "forbidden" }, { status: 403 });
+  }
+
+  // На Workers нет постоянного диска: видео временно отключено.
+  if (isWorkersDeployment) {
+    return NextResponse.json(
+      { error: "video storage is disabled on this deployment" },
+      { status: 503 },
+    );
   }
 
   const video = await prisma.video.findUnique({ where: { id } });

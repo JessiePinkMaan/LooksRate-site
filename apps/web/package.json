@@ -11,7 +11,11 @@
     "e2e": "playwright test",
     "qa:shots": "node scripts/qa-shots.mjs",
     "qa:a11y": "node scripts/qa-a11y.mjs",
-    "qa:perf": "node scripts/qa-perf.mjs"
+    "qa:perf": "node scripts/qa-perf.mjs",
+    "cf:build": "node scripts/cf-build.mjs",
+    "cf:preview": "opennextjs-cloudflare preview",
+    "cf:deploy": "opennextjs-cloudflare deploy",
+    "cf:types": "wrangler types"
   },
   "dependencies": {
     "@fontsource/cormorant-garamond": "^5.3.0",
@@ -21,6 +25,9 @@
     "@loxrate/config": "workspace:*",
     "@loxrate/db": "workspace:*",
     "@loxrate/ui": "workspace:*",
+    "@opennextjs/cloudflare": "^1.20.16",
+    "@prisma/adapter-pg": "7.10.1",
+    "@prisma/client": "7.10.1",
     "gsap": "^3.15.1",
     "lenis": "^1.3.27",
     "next": "^16.4.5",
@@ -40,6 +47,7 @@
     "@types/react-dom": "^19.3.0",
     "tailwindcss": "^4.3.4",
     "typescript": "^5.9.3",
-    "vitest": "^5.1.0"
+    "vitest": "^5.1.0",
+    "wrangler": "^4.158.0"
   }
 }

@@ -10,11 +10,20 @@ if (existsSync(rootEnvFile)) {
   process.loadEnvFile(rootEnvFile);
 }
 
+// Сборка под Cloudflare Workers (OpenNext) несовместима с `standalone`
+// и с серверной оптимизацией картинок.
+const onWorkers =
+  process.env.CF_WORKERS === "true" || process.env.CF_WORKERS === "1";
+
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
-  output: "standalone",
+  output: onWorkers ? undefined : "standalone",
   devIndicators: false,
+  images: onWorkers ? { unoptimized: true } : undefined,
+  // Prisma должен остаться внешним пакетом, иначе OpenNext не сможет
+  // подменить клиент на версию для Workers.
+  serverExternalPackages: ["@prisma/client", ".prisma/client"],
   transpilePackages: ["@loxrate/config", "@loxrate/ui", "@loxrate/db"],
   async rewrites() {
     // Next не роутит папки с `_`, поэтому стенд живёт в /design,

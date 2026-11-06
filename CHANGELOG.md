@@ -4,6 +4,18 @@
 
 ## [Unreleased]
 
+### Cloudflare Workers (видео временно отключено)
+- Добавлена сборка через `@opennextjs/cloudflare` + `wrangler`:
+  `apps/web/open-next.config.ts`, `apps/web/wrangler.jsonc`, `pnpm cf:build`.
+- Prisma на Workers работает через Hyperdrive: клиент с `maxUses: 1` в
+  `apps/web/lib/db.ts`, локально/Docker остаётся прежний клиент.
+- Маршруты загрузки и стриминга видео на Workers отвечают 503: постоянного
+  диска там нет.
+- Добавлены `docs/DEPLOY_CLOUDFLARE.md` (Neon + Hyperdrive + GitHub Actions) и
+  workflow `.github/workflows/deploy-cloudflare.yml`.
+- Обычная Docker-сборка не изменилась: `output: standalone` остаётся, пока
+  `CF_WORKERS` не выставлен.
+
 ### Бесплатный публичный деплой
 - `docs/DEPLOY_FREE.md`: пошаговый выкат на Oracle Cloud Always Free с
   бесплатным доменом DuckDNS, Caddy/TLS, бэкапами и чек-листом; отдельно -

@@ -23,7 +23,10 @@
     "assets:generate": "pnpm --filter @loxrate/assets generate",
     "qa:shots": "pnpm --filter @loxrate/web qa:shots",
     "qa:a11y": "pnpm --filter @loxrate/web qa:a11y",
-    "qa:perf": "pnpm --filter @loxrate/web qa:perf"
+    "qa:perf": "pnpm --filter @loxrate/web qa:perf",
+    "cf:build": "pnpm db:generate && pnpm --filter @loxrate/web cf:build",
+    "cf:preview": "pnpm --filter @loxrate/web cf:preview",
+    "cf:deploy": "pnpm --filter @loxrate/web cf:deploy"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

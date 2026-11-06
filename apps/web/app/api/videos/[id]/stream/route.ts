@@ -4,6 +4,7 @@ import { Readable } from "node:stream";
 import { decideAccess } from "@/lib/access";
 import { getSessionUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { isWorkersDeployment } from "@/lib/runtime";
 import { resolveStorageFile } from "@/lib/storage";
 
 function contentTypeFor(storageKey: string): string {
@@ -33,6 +34,11 @@ export async function GET(
     : [];
   const decision = decideAccess(user, video, subscriptions);
   if (!decision.allowed) return new Response("Forbidden", { status: 403 });
+
+  // На Workers нет постоянного диска: видео временно отключено.
+  if (isWorkersDeployment) {
+    return new Response("Video storage is disabled", { status: 503 });
+  }
 
   const asset = await prisma.videoAsset.findFirst({
     where: { videoId: id, kind: "ORIGINAL" },

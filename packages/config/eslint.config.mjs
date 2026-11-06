@@ -10,6 +10,8 @@ export default tseslint.config(
       "**/.next/**",
       "**/coverage/**",
       "**/.turbo/**",
+      "**/.open-next/**",
+      "**/.wrangler/**",
       "**/public/**",
       "**/*.config.mjs",
     ],
