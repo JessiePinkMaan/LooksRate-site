@@ -123,9 +123,6 @@ export function ManifestScroll() {
     >
       <div ref={stageRef} className="manifest-stage">
         <div className="manifest-depth" aria-hidden>
-          <span className="manifest-ring manifest-ring-a" />
-          <span className="manifest-ring manifest-ring-b" />
-          <span className="manifest-ring manifest-ring-c" />
           <span className="manifest-ghost manifest-ghost-a">
             <AppleImage variant="whole" sizes="220px" width={220} height={220} />
           </span>

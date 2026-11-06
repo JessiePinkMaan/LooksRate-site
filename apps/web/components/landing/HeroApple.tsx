@@ -8,16 +8,16 @@ import { AppleImage } from "./AppleImage";
 
 /**
  * Hero-яблоко: при наведении/фокусе вокруг загорается золотой свет,
- * с боков выезжают руки (как в «Сотворении Адама»), яблоко трескается.
- * Когда курсор уходит - снова целое. При reduced-motion/выключенных
- * эффектах - без анимаций, только смена изображения.
+ * с боков выезжают руки (как в «Сотворении Адама»), яблоко становится
+ * надкушенным. Когда курсор уходит - снова целое. При reduced-motion/
+ * выключенных эффектах - без анимаций, только смена изображения.
  */
 export function HeroApple() {
   const { sound } = usePreferences();
   const [awake, setAwake] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  const variant = awake ? "cracked" : "whole";
+  const variant = awake ? "bitten" : "whole";
 
   const playHoverSound = (): void => {
     if (!sound || typeof window === "undefined") return;
@@ -64,8 +64,8 @@ export function HeroApple() {
         aria-pressed={awake}
         aria-label={
           awake
-            ? "Яблоко треснуло. Руки тянутся к яблоку."
-            : "Яблоко LoxRate. Наведи, чтобы увидеть трещину и руки."
+            ? "Яблоко надкушено. Руки тянутся к яблоку."
+            : "Яблоко LoxRate. Наведи, чтобы увидеть руки."
         }
         onClick={() => {
           setAwake(true);

@@ -49,6 +49,7 @@ export function ThresholdGate({
   const [mode, setMode] = useState<AuthMode>("login");
   const [quoteIndex, setQuoteIndex] = useState(0);
   const [reduce, setReduce] = useState(false);
+  const [appleHover, setAppleHover] = useState(false);
   const finishedRef = useRef(false);
   const appleRef = useRef<HTMLButtonElement>(null);
   const timersRef = useRef<number[]>([]);
@@ -192,7 +193,9 @@ export function ThresholdGate({
   const showForm = phase === "auth";
   const exiting = phase === "exit";
   const appleVariant =
-    phase === "choice" || phase === "auth" ? "cracked" : "whole";
+    appleHover && (phase === "sealed" || phase === "choice")
+      ? "cracked"
+      : "whole";
 
   return (
     <div
@@ -213,6 +216,10 @@ export function ThresholdGate({
           onClick={() => {
             if (phase === "sealed") setPhase("choice");
           }}
+          onMouseEnter={() => {
+            if (phase === "sealed" || phase === "choice") setAppleHover(true);
+          }}
+          onMouseLeave={() => setAppleHover(false)}
           className="threshold-apple"
           data-compact={showForm ? "true" : "false"}
           aria-label={entry.appleLabel}

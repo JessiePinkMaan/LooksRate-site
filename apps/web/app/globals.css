@@ -934,9 +934,11 @@ html[data-effects="off"] .hero-apple {
 
 .manifest-scroll {
   position: relative;
-  border-top: 1px solid rgba(28, 28, 32, 0.55);
-  border-bottom: 1px solid rgba(28, 28, 32, 0.55);
   background:
+    linear-gradient(to bottom, #030303 0%, rgba(3, 3, 3, 0) 100%) center top /
+      100% 18vh no-repeat,
+    linear-gradient(to top, #030303 0%, rgba(3, 3, 3, 0) 100%) center bottom /
+      100% 18vh no-repeat,
     radial-gradient(circle at 50% 18%, rgba(201, 162, 39, 0.08), transparent 46%),
     radial-gradient(circle at 50% 82%, rgba(179, 18, 27, 0.06), transparent 52%),
     #030303;
@@ -958,39 +960,6 @@ html[data-effects="off"] .hero-apple {
   inset: 0;
   pointer-events: none;
   transform-style: preserve-3d;
-}
-
-.manifest-ring {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  border: 1px solid rgba(201, 162, 39, 0.14);
-  border-radius: 9999px;
-  transform: translate(-50%, -50%);
-}
-
-.manifest-ring-a {
-  width: 72vmin;
-  height: 72vmin;
-  border-color: rgba(201, 162, 39, 0.18);
-  transform: translate(-50%, -50%) rotate(calc(var(--p, 0) * 42deg))
-    scale(calc(0.86 + var(--p, 0) * 0.28));
-}
-
-.manifest-ring-b {
-  width: 108vmin;
-  height: 108vmin;
-  border-color: rgba(127, 132, 142, 0.12);
-  transform: translate(-50%, -50%) rotate(calc(var(--p, 0) * -28deg))
-    scale(calc(1.12 - var(--p, 0) * 0.18));
-}
-
-.manifest-ring-c {
-  width: 44vmin;
-  height: 44vmin;
-  border-style: dashed;
-  border-color: rgba(179, 18, 27, 0.16);
-  transform: translate(-50%, -50%) rotate(calc(var(--p, 0) * 76deg));
 }
 
 .manifest-ghost {
