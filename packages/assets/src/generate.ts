@@ -508,18 +508,31 @@ async function prepareHands(): Promise<void> {
   await saveHand(right, "hand-b.webp");
 }
 
-const HOVER_SOUND = "linia_raw_style (1).mp3";
+const APPLE_SOUNDS = [
+  {
+    source: "linia_raw_style (1).mp3",
+    output: "apple-hover.mp3",
+    label: "звук наведения на яблоко",
+  },
+  {
+    source: "ca6e4a6b9ce1681.mp3",
+    output: "apple-tremble.mp3",
+    label: "звук дрожания яблока",
+  },
+] as const;
 
-/** Звук наведения на яблоко. Исходник владельца копируется как есть. */
-function prepareHoverSound(): void {
-  const source = resolve(here, "../../../assets", HOVER_SOUND);
-  if (!existsSync(source)) {
-    console.log(`  · ${HOVER_SOUND} не найден — звук наведения пропущен`);
-    return;
+/** Звуки яблока от владельца копируются как есть. */
+function prepareAppleSounds(): void {
+  for (const sound of APPLE_SOUNDS) {
+    const source = resolve(here, "../../../assets", sound.source);
+    if (!existsSync(source)) {
+      console.log(`  · ${sound.source} не найден - ${sound.label} пропущен`);
+      continue;
+    }
+
+    copyFileSync(source, resolve(audioDir, sound.output));
+    console.log(`  + audio/${sound.output}`);
   }
-
-  copyFileSync(source, resolve(audioDir, "apple-hover.mp3"));
-  console.log("  + audio/apple-hover.mp3");
 }
 
 async function main(): Promise<void> {
@@ -552,7 +565,7 @@ async function main(): Promise<void> {
   await prepareApples();
   await prepareOg();
   await prepareHands();
-  prepareHoverSound();
+  prepareAppleSounds();
 
   console.log(
     "Готово. Это плейсхолдеры. Реальные ассеты — см. ASSETS_TODO.md (ASSET_NEEDED).",

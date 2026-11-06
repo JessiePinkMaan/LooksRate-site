@@ -53,6 +53,7 @@ export function ThresholdGate({
   const finishedRef = useRef(false);
   const appleRef = useRef<HTMLButtonElement>(null);
   const timersRef = useRef<number[]>([]);
+  const trembleAudioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     if (finishedRef.current) return;
@@ -105,6 +106,37 @@ export function ThresholdGate({
     setPhase("done");
   };
 
+  /** Звук дрожания играет всегда, независимо от переключателя звука. */
+  const playTrembleSound = (): void => {
+    if (typeof window === "undefined") return;
+
+    const audio =
+      trembleAudioRef.current ?? new Audio("/assets/audio/apple-tremble.mp3");
+    trembleAudioRef.current = audio;
+    audio.volume = 0.55;
+    audio.currentTime = 0;
+    void audio.play().catch(() => {
+      /* браузер может не дать автоплей - визуал не ломается */
+    });
+
+    for (let step = 0; step <= 10; step += 1) {
+      timersRef.current.push(
+        window.setTimeout(
+          () => {
+            audio.volume = Math.max(0, 0.55 * (1 - step / 10));
+          },
+          INTRO.flightAt + step * 55,
+        ),
+      );
+    }
+
+    timersRef.current.push(
+      window.setTimeout(() => {
+        audio.pause();
+      }, INTRO.flightAt + 650),
+    );
+  };
+
   const enterSite = (): void => {
     if (finishedRef.current) return;
     finishedRef.current = true;
@@ -131,6 +163,7 @@ export function ThresholdGate({
     }
 
     document.documentElement.dataset.intro = "running";
+    playTrembleSound();
 
     timersRef.current.push(
       window.setTimeout(() => {
