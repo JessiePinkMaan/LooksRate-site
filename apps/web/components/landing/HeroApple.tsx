@@ -31,15 +31,7 @@ export function HeroApple() {
   };
 
   return (
-    <div
-      className="hero-apple"
-      data-awake={awake ? "true" : "false"}
-      onMouseEnter={() => {
-        setAwake(true);
-        playHoverSound();
-      }}
-      onMouseLeave={() => setAwake(false)}
-    >
+    <div className="hero-apple" data-awake={awake ? "true" : "false"}>
       <span className="hero-apple-rays" aria-hidden />
       <span className="hero-apple-glow" aria-hidden />
       <img
@@ -67,6 +59,11 @@ export function HeroApple() {
             ? "Яблоко надкушено. Руки тянутся к яблоку."
             : "Яблоко LoxRate. Наведи, чтобы увидеть руки."
         }
+        onMouseEnter={() => {
+          setAwake(true);
+          playHoverSound();
+        }}
+        onMouseLeave={() => setAwake(false)}
         onClick={() => {
           setAwake(true);
           playHoverSound();

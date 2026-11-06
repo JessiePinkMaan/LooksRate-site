@@ -485,6 +485,17 @@ html[data-effects="off"] .hero-apple[data-awake="true"] .hero-hand {
   animation: threshold-charge 1.5s cubic-bezier(0.2, 0.7, 0.3, 1) forwards;
 }
 
+.threshold-gate[data-settling="true"] .threshold-aura,
+.threshold-gate[data-settling="true"] .threshold-grain {
+  animation: none;
+  opacity: 0;
+  transition: opacity 420ms ease;
+}
+
+.threshold-gate[data-settling="true"] .threshold-apple {
+  transition: opacity 420ms ease;
+}
+
 @keyframes threshold-breathe {
   0%,
   100% {

@@ -17,7 +17,8 @@ const TREMBLE_VOLUME = 0.63;
 /** Тайминги интро. Держим синхронно с CSS (см. `.threshold-gate` intro). */
 const INTRO = {
   flightAt: 2030,
-  doneAt: 2950,
+  settleAt: 2920,
+  doneAt: 3400,
   flightDuration: 860,
 } as const;
 
@@ -51,6 +52,7 @@ export function ThresholdGate({
   const [quoteIndex, setQuoteIndex] = useState(0);
   const [reduce, setReduce] = useState(false);
   const [appleHover, setAppleHover] = useState(false);
+  const [settling, setSettling] = useState(false);
   const finishedRef = useRef(false);
   const appleRef = useRef<HTMLButtonElement>(null);
   const timersRef = useRef<number[]>([]);
@@ -217,6 +219,35 @@ export function ThresholdGate({
     );
 
     timersRef.current.push(
+      window.setTimeout(() => {
+        setSettling(true);
+        document.documentElement.removeAttribute("data-intro");
+
+        const apple = appleRef.current;
+        if (!apple) return;
+
+        apple.animate([{ opacity: 1 }, { opacity: 0 }], {
+          duration: 420,
+          easing: "ease",
+          fill: "forwards",
+        });
+
+        // Ауру гасим отдельной анимацией: CSS-анимация заряда уже
+        // удерживает opacity, поэтому transition здесь не сработает.
+        const aura = document.querySelector<HTMLElement>(".threshold-aura");
+        if (aura) {
+          const from = getComputedStyle(aura).opacity;
+          aura.style.animation = "none";
+          aura.animate([{ opacity: from }, { opacity: 0 }], {
+            duration: 420,
+            easing: "ease",
+            fill: "forwards",
+          });
+        }
+      }, INTRO.settleAt),
+    );
+
+    timersRef.current.push(
       window.setTimeout(finishIntro, INTRO.doneAt),
     );
   };
@@ -235,6 +266,7 @@ export function ThresholdGate({
     <div
       className="threshold-gate"
       data-phase={phase}
+      data-settling={settling ? "true" : "false"}
       role="dialog"
       aria-modal="true"
       aria-label="Вход в LoxRate"
