@@ -84,7 +84,7 @@ function toFriendRow(
   return {
     friendshipId: friendship.id,
     name: displayName(other),
-    username: other.username ?? "—",
+    username: other.username ?? "-",
     rank: other.rank,
     aura: parseProfileTheme(other.profileTheme).aura,
   };
@@ -203,7 +203,7 @@ export default async function MePage({
             {displayName(user)}
           </h1>
           <p className="mt-2 font-mono text-[0.55rem] uppercase tracking-[0.2em] text-steel">
-            {user.role} · @{user.username ?? "—"}
+            {user.role} · @{user.username ?? "-"}
           </p>
         </div>
         <form action={logoutAction}>

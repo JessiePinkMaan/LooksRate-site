@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 export const dynamic = "force-dynamic";
 
 /**
- * Dev-исходящая очередь Telegram-бота (ТЗ §25). Реальная очередь — Фаза 6+.
+ * Dev-исходящая очередь Telegram-бота (ТЗ §25). Реальная очередь - Фаза 6+.
  */
 export default function DevOutboxPage() {
   const enabled =

@@ -9,7 +9,7 @@ import { usePreferences } from "@loxrate/ui";
 
 /**
  * Скролл-переходы (класс A, ТЗ §6.5): T4, T5, T7, T8.
- * При reduced-motion/выключенных эффектах — статичные финальные состояния.
+ * При reduced-motion/выключенных эффектах - статичные финальные состояния.
  */
 export function ScrollDemos() {
   const root = useRef<HTMLDivElement>(null);

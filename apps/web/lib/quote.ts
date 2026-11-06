@@ -8,7 +8,7 @@ export type QuoteCheck =
 
 /**
  * Нормализует пользовательскую цитату: схлопывает пробелы/переносы,
- * отсекает пустоту и проверяет границы. Чистая функция — покрыта тестом.
+ * отсекает пустоту и проверяет границы. Чистая функция - покрыта тестом.
  */
 export function checkQuote(value: unknown): QuoteCheck {
   if (typeof value !== "string") return { ok: false, reason: "short" };

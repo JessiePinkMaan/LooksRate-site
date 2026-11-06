@@ -42,7 +42,7 @@ const typeSamples = [
   {
     label: "Body · Inter",
     className: "font-sans text-xl",
-    text: "Кость — не твоя. Дисциплина — твоя.",
+    text: "Кость - не твоя. Дисциплина - твоя.",
   },
 ] as const;
 
@@ -141,7 +141,7 @@ export default function DesignPage() {
         <div className="grid gap-6 md:grid-cols-2">
           <div>
             <p className="mb-5 max-w-md text-sm leading-relaxed text-steel">
-              Ключевые действия — удержанием 0.8–1.2 с с отменой при уходе. При
+              Ключевые действия - удержанием 0.8-1.2 с с отменой при уходе. При
               reduced-motion или выключенных эффектах превращается в обычный
               клик.
             </p>
@@ -183,8 +183,8 @@ export default function DesignPage() {
       <section>
         <SectionTitle n="05" title="Курсор и эффекты" />
         <p className="max-w-2xl text-sm leading-relaxed text-steel">
-          Наведи на кнопку или карточку — красное кольцо реагирует на интерактив.
-          Тумблеры «Эффекты» и «Звук» — в левом нижнем углу. «Эффекты: выкл»
+          Наведи на кнопку или карточку - красное кольцо реагирует на интерактив.
+          Тумблеры «Эффекты» и «Звук» - в левом нижнем углу. «Эффекты: выкл»
           убирает курсор и анимации; при системном{" "}
           <span className="font-mono text-ash">prefers-reduced-motion</span>{" "}
           эффекты отключаются автоматически.

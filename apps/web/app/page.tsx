@@ -36,19 +36,19 @@ const rooms = [
     n: "04",
     title: "Ранги",
     href: "/ranks",
-    text: "R0–R7: путь дисциплины и вклада.",
+    text: "R0-R7: путь дисциплины и вклада.",
   },
   {
     n: "05",
     title: "Видео",
     href: "/vault",
-    text: "Видео-хранилище клуба. Часть — по доступу.",
+    text: "Видео-хранилище клуба. Часть - по доступу.",
   },
   {
     n: "06",
     title: "Доступ",
     href: "/access",
-    text: "Уровни T0–T4 и что внутри.",
+    text: "Уровни T0-T4 и что внутри.",
   },
   {
     n: "07",
@@ -90,10 +90,10 @@ export default async function HomePage() {
 
           <h1
             data-intro-title
-            className="relative mt-6 pb-6 font-heading text-[clamp(3rem,14vw,12rem)] uppercase leading-[0.82] tracking-[0.01em] sm:pb-10"
+            className="relative mt-6 pb-6 font-heading text-[clamp(3rem,14vw,12rem)] uppercase leading-none tracking-[0.01em] sm:pb-10"
           >
             <span className="block">{heroFirst}</span>
-            <span className="block -translate-x-2 sm:-translate-x-4">
+            <span className="mt-[0.14em] block -translate-x-2 sm:-translate-x-4">
               {heroRestLine}
             </span>
           </h1>

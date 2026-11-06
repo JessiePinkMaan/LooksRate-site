@@ -36,14 +36,14 @@ export default function LorePage() {
 
       <p className="mt-5 max-w-2xl text-sm leading-relaxed text-steel">
         Глоссарий луксмаксинга: честно, своими словами, с пометкой безопасности.
-        Уровень — глубина «айсберга»: от безобидного к тёмному.
+        Уровень - глубина «айсберга»: от безобидного к тёмному.
       </p>
 
       <div className="mt-6 border border-blood/40 bg-blood/5 p-5">
         <p className="font-heading text-lg uppercase text-ember">Цена</p>
         <p className="mt-2 text-sm leading-relaxed text-steel">
           Опасные практики (боунсмэшинг, препараты, голодание, самоповреждение)
-          здесь не описываются как инструкции. Если тебе тяжело — обратись к
+          здесь не описываются как инструкции. Если тебе тяжело - обратись к
           врачу или специалисту по психическому здоровью.
         </p>
       </div>

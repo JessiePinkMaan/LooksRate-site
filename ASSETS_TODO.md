@@ -14,7 +14,8 @@
 | `logo.svg` | яблоко + моно-текст `LOXRATE` | `ASSET_NEEDED` — нужен фирменный лого |
 | `founder-a.svg`, `founder-b.svg` | силуэты основателей (**CC0, Wikimedia**) | ✅ плейсхолдер; реальные фото — с согласия |
 | `marble-bust.svg` | мраморный бюст (стоические вставки) | `ASSET_NEEDED` — можно заменить фото/рендером |
-| `concrete.svg`, `grain.svg`, `lamp.svg` | бетон, зерно, свет лампы | `ASSET_NEEDED` — можно заменить реальными текстурами |
+| `concrete.svg`, `grain.svg`, `lamp.svg` | бетон, зерно, свет лампы | `ASSET_NEEDED` - можно заменить реальными текстурами |
+| `leather.svg` | старая кожа для карточек | ✅ процедурная текстура (feTurbulence + зерно) |
 | `audio/hum.wav`, `audio/drone.wav`, `audio/click.wav` | гул, дрон, щелчок | `ASSET_NEEDED` — нужны реальные звуки (<150 КБ) |
 
 ## Что реально нужно от владельца

@@ -24,7 +24,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.SITE_URL ?? "http://localhost:3000"),
   title: {
-    default: "LOXRATE — Подвал. Яблоко. Стоа.",
+    default: "LOXRATE - Подвал. Яблоко. Стоа.",
     template: "%s · LOXRATE",
   },
   description:
@@ -41,7 +41,7 @@ export const metadata: Metadata = {
     locale: "ru_RU",
     url: "/",
     siteName: "LOXRATE",
-    title: "LOXRATE — Подвал. Яблоко. Стоа.",
+    title: "LOXRATE - Подвал. Яблоко. Стоа.",
     description:
       "Твой честный рейтинг и проводник в мир луксмаксинга. Будь неудобным.",
     images: [
@@ -49,13 +49,13 @@ export const metadata: Metadata = {
         url: "/og.png",
         width: 1200,
         height: 630,
-        alt: "LOXRATE — Будь неудобным",
+        alt: "LOXRATE - Будь неудобным",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "LOXRATE — Подвал. Яблоко. Стоа.",
+    title: "LOXRATE - Подвал. Яблоко. Стоа.",
     description:
       "Твой честный рейтинг и проводник в мир луксмаксинга. Будь неудобным.",
     images: ["/og.png"],

@@ -31,7 +31,7 @@ export default function FoundersPage() {
             Основатели
           </h1>
           <p className="mt-4 max-w-2xl text-sm leading-relaxed text-steel">
-            Двое в свете лампы. Листай — цитаты появляются по одной; клик по
+            Двое в свете лампы. Листай - цитаты появляются по одной; клик по
             фигуре открывает досье.
           </p>
         </div>

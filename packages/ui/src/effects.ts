@@ -5,7 +5,7 @@ import { useSyncExternalStore } from "react";
 /**
  * Глобальные настройки «эффектов» и «звука» (ТЗ §4.5, §18).
  * «Эффекты» выключают курсор, тяжёлые анимации и шейдеры; по умолчанию
- * подхватывается `prefers-reduced-motion`. Настройки — в localStorage.
+ * подхватывается `prefers-reduced-motion`. Настройки - в localStorage.
  */
 
 export type Preferences = {

@@ -14,9 +14,7 @@ function Rivet({ className }: { className: string }) {
     <span
       aria-hidden
       className={cn(
-        "pointer-events-none absolute h-2 w-2 rounded-full",
-        "bg-[radial-gradient(circle_at_30%_30%,#6e727a,#1c1c20_70%)]",
-        "shadow-[inset_0_0_1px_#000]",
+        "riveted-rivet pointer-events-none absolute h-2 w-2 rounded-full",
         className,
       )}
     />
@@ -24,8 +22,8 @@ function Rivet({ className }: { className: string }) {
 }
 
 /**
- * Карточка с фактурой «папка дела»: заклёпки по углам + «строчка»
- * (dashed inner border). Строго декоративно (ТЗ §4.3).
+ * Карточка с фактурой «папка дела»: старая кожа, заклёпки по углам
+ * и «строчка» (dashed inner border). Строго декоративно (ТЗ §4.3).
  */
 export function RivetedCard({
   children,
@@ -34,15 +32,10 @@ export function RivetedCard({
   className,
 }: RivetedCardProps) {
   return (
-    <div
-      className={cn(
-        "relative border border-graphite bg-concrete p-6",
-        className,
-      )}
-    >
+    <div className={cn("riveted-card relative p-6", className)}>
       <span
         aria-hidden
-        className="pointer-events-none absolute inset-2 border border-dashed border-steel/20"
+        className="riveted-card-stitch pointer-events-none absolute inset-2 border border-dashed"
       />
       <Rivet className="left-1.5 top-1.5" />
       <Rivet className="right-1.5 top-1.5" />

@@ -29,7 +29,7 @@ export default function AccessPage() {
       </h1>
 
       <p className="mt-5 max-w-2xl text-sm leading-relaxed text-steel">
-        Тарифы T0–T4. На старте цены скрыты — показывается «Скоро». Оплата и
+        Тарифы T0-T4. На старте цены скрыты - показывается «Скоро». Оплата и
         ручная выдача появятся позже.
       </p>
 

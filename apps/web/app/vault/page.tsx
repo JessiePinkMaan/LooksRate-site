@@ -86,10 +86,10 @@ export default async function VaultPage() {
       </h1>
       <p className="mt-4 max-w-2xl text-sm leading-relaxed text-steel">
         Видео-хранилище клуба LoxRate: записи, разборы и сессии. Часть открыта,
-        часть — по рангу или тарифу. Доступ проверяется на сервере.
+        часть - по рангу или тарифу. Доступ проверяется на сервере.
       </p>
       <p className="mt-3 font-mono text-[0.55rem] uppercase tracking-[0.2em] text-steel">
-        PUBLIC — открыто · AUTH — после входа · R3 — по рангу · T2 — по тарифу
+        PUBLIC - открыто · AUTH - после входа · R3 - по рангу · T2 - по тарифу
       </p>
 
       {cards.length === 0 ? (

@@ -8,17 +8,16 @@ import { AppleImage } from "./AppleImage";
 
 /**
  * Hero-яблоко: при наведении/фокусе вокруг загорается золотой свет,
- * с боков выезжают руки (как в «Сотворении Адама»), яблоко становится
- * надкушенным; клик добавляет трещину. При reduced-motion/выключенных
- * эффектах — без анимаций, только смена изображения.
+ * с боков выезжают руки (как в «Сотворении Адама»), яблоко трескается.
+ * Когда курсор уходит - снова целое. При reduced-motion/выключенных
+ * эффектах - без анимаций, только смена изображения.
  */
 export function HeroApple() {
   const { sound } = usePreferences();
-  const [mode, setMode] = useState<"idle" | "hover" | "cracked">("idle");
+  const [awake, setAwake] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  const awake = mode !== "idle";
-  const variant = mode === "cracked" ? "cracked" : awake ? "bitten" : "whole";
+  const variant = awake ? "cracked" : "whole";
 
   const playHoverSound = (): void => {
     if (!sound || typeof window === "undefined") return;
@@ -27,7 +26,7 @@ export function HeroApple() {
     audio.volume = 0.45;
     audio.currentTime = 0;
     void audio.play().catch(() => {
-      /* автоплей может быть запрещён — интерфейс не ломается */
+      /* автоплей может быть запрещён - интерфейс не ломается */
     });
   };
 
@@ -35,12 +34,11 @@ export function HeroApple() {
     <div
       className="hero-apple"
       data-awake={awake ? "true" : "false"}
-      data-mode={mode}
       onMouseEnter={() => {
-        setMode((current) => (current === "cracked" ? current : "hover"));
+        setAwake(true);
         playHoverSound();
       }}
-      onMouseLeave={() => setMode("idle")}
+      onMouseLeave={() => setAwake(false)}
     >
       <span className="hero-apple-rays" aria-hidden />
       <span className="hero-apple-glow" aria-hidden />
@@ -65,21 +63,19 @@ export function HeroApple() {
         data-hero-apple
         aria-pressed={awake}
         aria-label={
-          mode === "cracked"
-            ? "Яблоко треснуло. Нажми, чтобы вернуть целое."
-            : awake
-              ? "Яблоко надкушено. Руки тянутся к яблоку."
-              : "Яблоко LoxRate. Наведи, чтобы увидеть руки."
+          awake
+            ? "Яблоко треснуло. Руки тянутся к яблоку."
+            : "Яблоко LoxRate. Наведи, чтобы увидеть трещину и руки."
         }
         onClick={() => {
-          setMode((current) => (current === "cracked" ? "idle" : "cracked"));
+          setAwake(true);
           playHoverSound();
         }}
         onFocus={() => {
-          setMode((current) => (current === "cracked" ? current : "hover"));
+          setAwake(true);
           playHoverSound();
         }}
-        onBlur={() => setMode("idle")}
+        onBlur={() => setAwake(false)}
       >
         <AppleImage
           variant={variant}

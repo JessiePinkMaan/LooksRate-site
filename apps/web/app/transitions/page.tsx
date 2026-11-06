@@ -43,7 +43,7 @@ export default function TransitionsPage() {
         </h1>
         <p className="mt-5 text-pretty text-sm leading-relaxed text-steel">
           Lenis + GSAP ScrollTrigger, занавес переходов на OGL и все девять
-          эффектов. Роут-переходы запускаются кнопками, скролл-переходы — при
+          эффектов. Роут-переходы запускаются кнопками, скролл-переходы - при
           прокрутке ниже.
         </p>
       </header>
@@ -52,7 +52,7 @@ export default function TransitionsPage() {
         <SectionTitle n="A" title="Роут-переходы (класс B)" />
         <p className="mb-6 max-w-2xl text-sm leading-relaxed text-steel">
           Cover → router.push → готовность маршрута → scrollTo(0) → reveal.
-          Сторожевой таймер — 4 с. При reduced-motion или без WebGL —
+          Сторожевой таймер - 4 с. При reduced-motion или без WebGL -
           кросс-фейд 200 мс.
         </p>
         <RouteDemos />
@@ -64,7 +64,7 @@ export default function TransitionsPage() {
         <SectionTitle n="B" title="Скролл-переходы (класс A)" />
         <p className="mb-8 max-w-2xl text-sm leading-relaxed text-steel">
           Привязаны к прогрессу скролла, обратимы, не блокируют скролл.
-          Прокрути страницу — эффекты T4, T5, T7 и T8 сработают по мере
+          Прокрути страницу - эффекты T4, T5, T7 и T8 сработают по мере
           появления блоков.
         </p>
         <ScrollDemos />

@@ -85,7 +85,7 @@ export async function sendFriendRequestAction(
   });
 
   if (existing) {
-    // Встречная заявка — сразу друзья, без лишнего клика.
+    // Встречная заявка - сразу друзья, без лишнего клика.
     if (existing.status === "PENDING" && existing.requesterId === target.id) {
       await prisma.friendship.update({
         where: { id: existing.id },

@@ -16,7 +16,7 @@ import tiers from "../../../content/ru/tiers.json";
 import vaultPreview from "../../../content/ru/vault-preview.json";
 
 /**
- * Единая точка чтения сид-контента (content/ru). На Фазе 3 — статически.
+ * Единая точка чтения сид-контента (content/ru). На Фазе 3 - статически.
  * Позже (Фаза 10/11) эти же ключи придут из CMS/БД.
  */
 export {

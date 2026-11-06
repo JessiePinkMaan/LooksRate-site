@@ -10,7 +10,7 @@ import { ranks } from "@/lib/content";
 
 /**
  * Комната 05 «Лестница рангов» (ТЗ §8): горизонтальный коридор, пин на скролле.
- * При reduced-motion/выключенных эффектах — обычная горизонтальная прокрутка.
+ * При reduced-motion/выключенных эффектах - обычная горизонтальная прокрутка.
  */
 export function RanksCorridor() {
   const section = useRef<HTMLDivElement>(null);
@@ -64,7 +64,7 @@ export function RanksCorridor() {
           </h2>
         </div>
         <p className="max-w-[14rem] text-right font-mono text-[0.6rem] uppercase leading-relaxed tracking-[0.2em] text-steel">
-          ранг — про дисциплину,
+          ранг - про дисциплину,
           <br />
           не про внешность
         </p>

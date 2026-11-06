@@ -25,7 +25,7 @@ export default async function AdminUsersPage() {
             </p>
             <p className="font-mono text-[0.55rem] uppercase tracking-[0.18em] text-steel">
               {user.role} · {user.rank} · {user.xp} XP · {user.status} · tg{" "}
-              {user.tgId ?? "—"}
+              {user.tgId ?? "-"}
             </p>
           </div>
           <form action={updateUserRoleAction} className="flex items-center gap-2">

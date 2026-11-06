@@ -1,5 +1,5 @@
 {
-  "note": "Превью Vault для лендинга (Фаза 3). Реальные видео — из БД (Фаза 8).",
+  "note": "Превью Vault для лендинга (Фаза 3). Реальные видео - из БД (Фаза 8).",
   "videos": [
     { "slug": "welcome-to-vault", "title": "Первый вход в Подвал", "access": "PUBLIC", "duration": "08:12", "locked": false },
     { "slug": "discipline-basics", "title": "Дисциплина: база", "access": "AUTH", "duration": "12:40", "locked": false },

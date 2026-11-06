@@ -53,7 +53,7 @@ const sceneQuotes = [
 /**
  * Флагманская сцена «Основатели» (ТЗ §7, комната 07).
  * Слоистая сцена: пол, световой круг за курсором, силуэты, пыль, луч лампы.
- * Скролл = спуск камеры + цитаты по одной. reduced-motion/без эффектов —
+ * Скролл = спуск камеры + цитаты по одной. reduced-motion/без эффектов -
  * статичная композиция с hover-подсветкой.
  */
 export function FoundersScene() {
@@ -289,7 +289,7 @@ export function FoundersScene() {
                 «{quote.text}»
               </p>
               <cite className="mt-2 block font-mono text-[0.55rem] uppercase not-italic tracking-[0.25em] text-steel">
-                — {quote.who}
+                - {quote.who}
               </cite>
             </blockquote>
           ))}
@@ -324,7 +324,7 @@ export function FoundersScene() {
         <ul className="sr-only">
           {people.map((person) => (
             <li key={person.alias}>
-              {person.alias} — {person.role}. {person.quote}
+              {person.alias} - {person.role}. {person.quote}
             </li>
           ))}
         </ul>

@@ -38,7 +38,7 @@ export default async function AdminVideosPage({
         {error ? (
           <p className="border border-blood/40 bg-blood/5 px-3 py-2 text-xs text-ember sm:col-span-2">
             {error === "validation"
-              ? "Проверь поля: название ≥2 символов, slug — a-z/0-9/дефис."
+              ? "Проверь поля: название ≥2 символов, slug - a-z/0-9/дефис."
               : "Не удалось сохранить видео (возможно, slug уже занят)."}
           </p>
         ) : null}
@@ -63,11 +63,11 @@ export default async function AdminVideosPage({
         <label className="text-xs text-steel">
           Доступ
           <select name="accessType" className={inputClass} defaultValue="AUTH">
-            <option value="PUBLIC">PUBLIC — всем</option>
-            <option value="AUTH">AUTH — после входа</option>
-            <option value="RANK">RANK — по рангу</option>
-            <option value="TIER">TIER — по тарифу</option>
-            <option value="RANK_AND_TIER">RANK_AND_TIER — ранг + тариф</option>
+            <option value="PUBLIC">PUBLIC - всем</option>
+            <option value="AUTH">AUTH - после входа</option>
+            <option value="RANK">RANK - по рангу</option>
+            <option value="TIER">TIER - по тарифу</option>
+            <option value="RANK_AND_TIER">RANK_AND_TIER - ранг + тариф</option>
           </select>
         </label>
         <div className="grid grid-cols-2 gap-3">

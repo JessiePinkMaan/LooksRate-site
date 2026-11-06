@@ -35,7 +35,7 @@ export default async function HallPage() {
         Зал славы
       </h1>
       <p className="mt-4 max-w-2xl text-sm leading-relaxed text-steel">
-        Сезонный топ по XP. Показываются только ники и ранги — без личных данных.
+        Сезонный топ по XP. Показываются только ники и ранги - без личных данных.
       </p>
 
       <ol className="mt-8 space-y-2">

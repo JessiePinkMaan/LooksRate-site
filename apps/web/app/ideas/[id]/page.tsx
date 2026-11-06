@@ -98,7 +98,7 @@ export default async function IdeaPage({ params }: IdeaPageProps) {
         <ul className="mt-6 space-y-1 font-mono text-[0.55rem] uppercase tracking-[0.18em] text-steel">
           {idea.history.map((entry) => (
             <li key={entry.id}>
-              {entry.fromStatus ?? "—"} → {entry.toStatus} ·{" "}
+              {entry.fromStatus ?? "-"} → {entry.toStatus} ·{" "}
               {new Date(entry.changedAt).toLocaleDateString("ru-RU")}
             </li>
           ))}

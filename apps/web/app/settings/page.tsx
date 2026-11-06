@@ -25,7 +25,7 @@ export default function SettingsPage() {
           <h2 className="font-heading text-2xl uppercase">Эффекты</h2>
           <p className="mt-2 text-sm leading-relaxed text-steel">
             Анимации, свечение, параллакс и переходы между страницами. Если
-            выключить — останется статичная версия без движения.
+            выключить - останется статичная версия без движения.
           </p>
           <div className="mt-4">
             <EffectsToggle />
@@ -45,7 +45,7 @@ export default function SettingsPage() {
 
       <p className="mt-8 text-xs leading-relaxed text-steel">
         Если в системе включено «уменьшение движения», анимации отключаются
-        автоматически — независимо от этой настройки.
+        автоматически - независимо от этой настройки.
       </p>
     </main>
   );

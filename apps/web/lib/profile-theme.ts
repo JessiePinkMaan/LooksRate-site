@@ -26,7 +26,7 @@ function isOneOf<T extends string>(
   return typeof value === "string" && options.includes(value as T);
 }
 
-/** JSON из БД может быть старым или битым — всегда возвращаем валидную тему. */
+/** JSON из БД может быть старым или битым - всегда возвращаем валидную тему. */
 export function parseProfileTheme(value: unknown): ProfileTheme {
   if (!value || typeof value !== "object") return DEFAULT_PROFILE_THEME;
   const record = value as Record<string, unknown>;

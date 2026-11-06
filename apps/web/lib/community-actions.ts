@@ -103,7 +103,7 @@ export async function reportCommentAction(formData: FormData): Promise<void> {
       data: { commentId: id, reporterId: user.id, reason: "жалоба" },
     });
   } catch {
-    // повторная жалоба того же пользователя — игнорируем
+    // повторная жалоба того же пользователя - игнорируем
   }
 
   revalidatePath(path);

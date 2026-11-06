@@ -24,13 +24,13 @@ type Phase = "sealed" | "choice" | "auth" | "exit" | "done";
 type AuthMode = "login" | "register";
 
 type ThresholdGateProps = {
-  /** Уже вошёл — не показываем врата повторно. */
+  /** Уже вошёл - не показываем врата повторно. */
   initiallyEntered?: boolean;
 };
 
 /**
  * Врата входа (комната 00): большое яблоко в темноте, цитаты стоиков
- * и мягкий вход в сайт. Пока пользователь не нажал яблоко — вокруг только
+ * и мягкий вход в сайт. Пока пользователь не нажал яблоко - вокруг только
  * свет и текст.
  *
  * После входа яблоко не крутится: оно дрожит и светится, пока шапка,
@@ -61,7 +61,7 @@ export function ThresholdGate({
         return;
       }
     } catch {
-      /* приватный режим — врата просто покажутся */
+      /* приватный режим - врата просто покажутся */
     }
 
     const media = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -90,7 +90,7 @@ export function ThresholdGate({
     };
   }, [phase]);
 
-  // Если компонент ушёл раньше времени — снимаем интро-атрибут и таймеры.
+  // Если компонент ушёл раньше времени - снимаем интро-атрибут и таймеры.
   useEffect(() => {
     const timers = timersRef.current;
     return () => {
@@ -249,7 +249,7 @@ export function ThresholdGate({
                   «{quote.text}»
                 </p>
                 <cite className="mt-3 block font-mono text-[0.55rem] uppercase not-italic tracking-[0.32em] text-steel">
-                  — {quote.author}
+                  - {quote.author}
                 </cite>
               </blockquote>
 

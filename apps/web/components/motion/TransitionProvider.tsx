@@ -33,7 +33,7 @@ const ROUTE_TYPES: CurtainType[] = [1, 9, 6];
 
 /**
  * Роут-переходы (ТЗ §6.6): cover → router.push → ready → scrollTo(0) → reveal.
- * При reduced-motion / без WebGL — кросс-фейд 200 мс. Watchdog 4 с.
+ * При reduced-motion / без WebGL - кросс-фейд 200 мс. Watchdog 4 с.
  */
 export function TransitionProvider({ children }: { children: ReactNode }) {
   const router = useRouter();

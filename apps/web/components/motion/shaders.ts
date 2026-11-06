@@ -52,25 +52,25 @@ void main() {
   vec3 col = uBg;
 
   if (uType < 1.5) {
-    // T1 — Трещина (шумный фронт + красная кромка)
+    // T1 - Трещина (шумный фронт + красная кромка)
     float n = noise2(uv * 9.0 + uTime * 0.15);
     float radius = p * 2.0 + (n - 0.5) * 0.35;
     a = 1.0 - smoothstep(radius - 0.03, radius + 0.03, d);
     float edge = smoothstep(0.07, 0.0, abs(d - radius));
     col = mix(uBg, uBlood, edge * 0.9);
   } else if (uType < 2.5) {
-    // T2 — Люк (радиальная диафрагма)
+    // T2 - Люк (радиальная диафрагма)
     float radius = p * 2.0;
     a = 1.0 - smoothstep(radius - 0.02, radius + 0.02, d);
     col = uBg;
   } else if (uType < 3.5) {
-    // T3 — Падение яблока (красная волна от точки)
+    // T3 - Падение яблока (красная волна от точки)
     float radius = p * 2.1;
     a = 1.0 - smoothstep(radius - 0.04, radius + 0.04, d);
     float ring = smoothstep(0.1, 0.0, abs(d - radius));
     col = mix(uBg, uBlood, 0.35 + ring * 0.6);
   } else if (uType < 6.5) {
-    // T6 — Плёнка (вертикальный сдвиг + зерно + cue mark)
+    // T6 - Плёнка (вертикальный сдвиг + зерно + cue mark)
     float jitter = (hash21(vec2(floor(uTime * 24.0), 1.0)) - 0.5) * 0.06;
     a = step(1.0 - p, uv.y + jitter);
     float grain = hash21(uv * 512.0 + floor(uTime * 30.0));
@@ -78,7 +78,7 @@ void main() {
     float cue = smoothstep(0.025, 0.0, distance(uv, vec2(0.88, 0.1)));
     col = mix(col, uBlood, cue);
   } else {
-    // T9 — Глитч-шов (горизонтальные полосы + RGB-расслоение)
+    // T9 - Глитч-шов (горизонтальные полосы + RGB-расслоение)
     float bands = 20.0;
     float band = floor(uv.y * bands);
     float n = hash21(vec2(band, floor(uTime * 16.0)));

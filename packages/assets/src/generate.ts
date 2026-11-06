@@ -173,6 +173,30 @@ function concrete(): string {
 </svg>`;
 }
 
+/**
+ * Старая кожа для карточек: крупные пятна + мелкое зерно.
+ * Текстура прозрачная, цвет и глубина задаются CSS-слоями.
+ */
+function leather(): string {
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="384" height="384">
+  <defs>
+    <filter id="leather-hide" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.013 0.021" numOctaves="5" seed="12" result="noise"/>
+      <feColorMatrix in="noise" type="matrix" values="0 0 0 0 0.62  0 0 0 0 0.4  0 0 0 0 0.26  0 0 0 0.6 0"/>
+    </filter>
+    <filter id="leather-grain" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.86" numOctaves="2" seed="5" result="grain"/>
+      <feColorMatrix in="grain" type="saturate" values="0"/>
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.16"/>
+      </feComponentTransfer>
+    </filter>
+  </defs>
+  <rect width="100%" height="100%" filter="url(#leather-hide)"/>
+  <rect width="100%" height="100%" filter="url(#leather-grain)"/>
+</svg>`;
+}
+
 function lamp(): string {
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Свет лампы (ASSET_NEEDED)">
   <defs>
@@ -518,6 +542,7 @@ async function main(): Promise<void> {
   writeSvg("lock.svg", lockIcon());
   writeSvg("grain.svg", grain());
   writeSvg("concrete.svg", concrete());
+  writeSvg("leather.svg", leather());
   writeSvg("lamp.svg", lamp());
 
   writeWav("hum.wav", makeHum(1.2, 22050));

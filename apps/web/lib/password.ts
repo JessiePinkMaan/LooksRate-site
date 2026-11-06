@@ -4,7 +4,7 @@ import { randomBytes, scryptSync, timingSafeEqual } from "node:crypto";
 
 const KEY_LENGTH = 64;
 
-/** scrypt-хеш вида `scrypt$<salt>$<hash>` — без внешних зависимостей. */
+/** scrypt-хеш вида `scrypt$<salt>$<hash>` - без внешних зависимостей. */
 export function hashPassword(password: string): string {
   const salt = randomBytes(16).toString("hex");
   const hash = scryptSync(password, salt, KEY_LENGTH).toString("hex");
