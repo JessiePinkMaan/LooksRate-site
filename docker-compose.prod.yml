@@ -153,6 +153,21 @@ services:
         condition: service_healthy
     logging: *default-logging
 
+  # Выдаёт OWNER зарегистрированному пользователю:
+  # docker compose ... --profile tools run --rm promote <username>
+  promote:
+    profiles: ["tools"]
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+      target: builder
+    env_file: .env
+    command: ["pnpm", "--filter", "@loxrate/db", "promote"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+    logging: *default-logging
+
   # Worker намеренно не включён в прод-стек: текущий src/index.ts —
   # заглушка, которая сразу завершается. Вернуть сервис после реального
   # транскодинга (Фаза 8), иначе Docker будет перезапускать его по кругу.

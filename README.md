@@ -175,6 +175,7 @@ pnpm assets:generate
 | `pnpm docker:up` / `docker:down` | PostgreSQL + Redis (MinIO - профиль `storage`) |
 | `pnpm db:migrate` / `db:seed` / `db:reset` | миграции, сиды, сброс |
 | `pnpm db:backup` | pg_dump в `backups/` |
+| `pnpm db:promote <username>` | выдать пользователю роль `OWNER` |
 | `pnpm assets:generate` | WebP/ассеты из исходников |
 | `pnpm qa:shots` | скриншоты страниц |
 | `pnpm qa:a11y` | axe-аудит |
@@ -210,10 +211,13 @@ pnpm qa:a11y
 
 Пошаговый выкат, TLS, миграции, бэкапы, обновление и откат:
 
-- [`docs/DEPLOY.md`](docs/DEPLOY.md)
+- [`docs/DEPLOY.md`](docs/DEPLOY.md) - универсальный чек-лист для Docker-хоста.
+- [`docs/DEPLOY_FREE.md`](docs/DEPLOY_FREE.md) - бесплатная публичная ссылка:
+  Oracle Cloud Always Free + DuckDNS или временный туннель с домашнего ПК.
 - шаблон: `.env.production.example`
 - `docker compose -f docker-compose.prod.yml ...`
 - optional Caddy-профиль: `deploy/Caddyfile`
+- первый владелец: `pnpm db:promote <username>` (в Docker - сервис `promote`).
 
 ## Ограничения текущего R1
 
@@ -231,5 +235,6 @@ pnpm qa:a11y
 - `DECISIONS.md` - решения и отступления.
 - `ASSETS_TODO.md` - что ещё нужно от владельца.
 - `docs/DEPLOY.md` - деплой.
+- `docs/DEPLOY_FREE.md` - бесплатный публичный стенд.
 - `docs/QA_AND_RISKS.md` - QA и риски.
 - `CHANGELOG.md` - изменения по фазам.

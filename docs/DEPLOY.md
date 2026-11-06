@@ -3,6 +3,10 @@
 Короткий чек-лист для одного Docker-хоста. Все секреты живут только в `.env`
 на сервере; `.env` и `backups/` в git не попадают.
 
+Нужен бесплатный публичный стенд (Oracle Always Free + DuckDNS)? Пошагово:
+[`DEPLOY_FREE.md`](DEPLOY_FREE.md). Ниже - универсальный чек-лист для любого
+Docker-хоста.
+
 ## 0. Что нужно
 
 - VPS/сервер с Docker Engine и Docker Compose v2.
@@ -73,6 +77,12 @@ docker compose -f docker-compose.prod.yml --profile tools run --rm seed
 ```
 
 Схема обновляется только вперёд. Перед рискованной миграцией сделай бэкап.
+
+Первый владелец: зарегистрируйся на сайте, затем выдай себе роль `OWNER`:
+
+```bash
+docker compose -f docker-compose.prod.yml --profile tools run --rm promote <username>
+```
 
 ## 4. Проверка
 
@@ -153,6 +163,7 @@ docker compose -f docker-compose.prod.yml --profile tools run --rm migrate
 ## 9. Безопасность перед публикацией
 
 - [ ] `SITE_URL` с https, домен указывает на сервер.
+- [ ] Владелец зарегистрирован и повышен до `OWNER` (`--profile tools run --rm promote`).
 - [ ] `DEV_LOGIN=false`, `/dev/*` и `/admin/*` отдают 404/редирект для гостей.
 - [ ] `SESSION_SECRET` и `VIDEO_KEY_MASTER` сгенерированы, не из примеров.
 - [ ] Пароль PostgreSQL не `loxrate`/`postgres`.

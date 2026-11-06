@@ -17,6 +17,7 @@
     "db:generate": "pnpm --filter @loxrate/db generate",
     "db:migrate": "dotenv -e .env -- pnpm --filter @loxrate/db migrate",
     "db:seed": "dotenv -e .env -- pnpm --filter @loxrate/db seed",
+    "db:promote": "dotenv -e .env -- pnpm --filter @loxrate/db promote",
     "db:reset": "dotenv -e .env -- pnpm --filter @loxrate/db reset",
     "db:backup": "node scripts/backup-db.mjs",
     "assets:generate": "pnpm --filter @loxrate/assets generate",
