@@ -34,6 +34,7 @@ services:
   minio:
     image: minio/minio:latest
     container_name: loxrate-minio
+    profiles: ["storage"]
     restart: unless-stopped
     command: server /data --console-address ":9001"
     environment:
@@ -54,6 +55,7 @@ services:
   minio-init:
     image: minio/mc:latest
     container_name: loxrate-minio-init
+    profiles: ["storage"]
     depends_on:
       minio:
         condition: service_healthy

@@ -387,6 +387,60 @@ async function prepareApples(): Promise<void> {
   console.log("  + apple-photo.webp / apple-bitten.webp (fallback aliases)");
 }
 
+const MANIFEST_APPLES = [
+  {
+    file: "photo_2026-11-06_20-31-13.jpg",
+    name: "manifest-apple-a",
+    widths: [180, 389],
+  },
+  {
+    file: "photo_2026-11-06_20-31-17.jpg",
+    name: "manifest-apple-b",
+    widths: [140, 290],
+  },
+] as const;
+
+/**
+ * Страшные яблоки для фона манифеста. Фон тоже чёрный, но кадр не квадратный,
+ * поэтому сохраняем пропорции и просто вырезаем альфу по яркости.
+ */
+async function prepareManifestApples(): Promise<void> {
+  for (const item of MANIFEST_APPLES) {
+    const source = resolve(here, "../../../assets", item.file);
+    if (!existsSync(source)) {
+      console.log(`  · ${item.file} не найден - фон манифеста пропущен`);
+      continue;
+    }
+
+    const { data, info } = await sharp(source)
+      .ensureAlpha()
+      .raw()
+      .toBuffer({ resolveWithObject: true });
+    const pixels = Buffer.from(data);
+
+    for (let i = 0; i < pixels.length; i += 4) {
+      const peak = Math.max(
+        pixels[i] ?? 0,
+        pixels[i + 1] ?? 0,
+        pixels[i + 2] ?? 0,
+      );
+      const alpha = Math.min(1, Math.max(0, (peak - 7) / 26));
+      pixels[i + 3] = Math.round(alpha * 255);
+    }
+
+    for (const width of item.widths) {
+      const name = `${item.name}-${width}.webp`;
+      await sharp(pixels, {
+        raw: { width: info.width, height: info.height, channels: 4 },
+      })
+        .resize({ width })
+        .webp({ quality: 90, alphaQuality: 100, effort: 6 })
+        .toFile(resolve(outDir, name));
+      console.log(`  + ${name}`);
+    }
+  }
+}
+
 async function prepareOg(): Promise<void> {
   const applePath = resolve(outDir, "apple-whole-640.webp");
   if (!existsSync(applePath)) return;
@@ -563,6 +617,7 @@ async function main(): Promise<void> {
   writeWav("click.wav", makeClick(0.12, 22050));
 
   await prepareApples();
+  await prepareManifestApples();
   await prepareOg();
   await prepareHands();
   prepareAppleSounds();

@@ -24,7 +24,7 @@ const rooms = [
     n: "02",
     title: "Основатели",
     href: "/founders",
-    text: "Двое в свете лампы. Досье и цитаты.",
+    text: "",
   },
   {
     n: "03",
@@ -140,9 +140,11 @@ export default async function HomePage() {
               <TLink key={room.href} href={room.href} className="block">
                 <RivetedCard label={room.n} number="→" className="h-full">
                   <p className="font-heading text-2xl uppercase">{room.title}</p>
-                  <p className="mt-2 text-sm leading-relaxed text-steel">
-                    {room.text}
-                  </p>
+                  {room.text ? (
+                    <p className="mt-2 text-sm leading-relaxed text-steel">
+                      {room.text}
+                    </p>
+                  ) : null}
                 </RivetedCard>
               </TLink>
             ))}

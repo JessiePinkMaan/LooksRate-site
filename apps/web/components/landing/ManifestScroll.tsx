@@ -128,6 +128,28 @@ export function ManifestScroll() {
           <span className="manifest-ghost manifest-ghost-c">
             <AppleImage variant="bitten" sizes="110px" width={110} height={110} />
           </span>
+          <span className="manifest-ghost manifest-ghost-d">
+            <img
+              src="/assets/manifest-apple-a-180.webp"
+              srcSet="/assets/manifest-apple-a-180.webp 180w, /assets/manifest-apple-a-389.webp 389w"
+              sizes="(max-width: 640px) 100px, 175px"
+              width={180}
+              height={230}
+              alt=""
+              draggable={false}
+            />
+          </span>
+          <span className="manifest-ghost manifest-ghost-e">
+            <img
+              src="/assets/manifest-apple-b-140.webp"
+              srcSet="/assets/manifest-apple-b-140.webp 140w, /assets/manifest-apple-b-290.webp 290w"
+              sizes="(max-width: 640px) 80px, 130px"
+              width={140}
+              height={202}
+              alt=""
+              draggable={false}
+            />
+          </span>
         </div>
 
         <div className="manifest-head">
@@ -159,10 +181,6 @@ export function ManifestScroll() {
             </li>
           ))}
         </ol>
-
-        <div className="manifest-foot">
-          <p className="manifest-hint">{manifest.hint}</p>
-        </div>
       </div>
     </section>
   );

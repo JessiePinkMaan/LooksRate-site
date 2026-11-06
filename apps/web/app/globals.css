@@ -1013,6 +1013,24 @@ html[data-effects="off"] .hero-apple {
     rotate(calc(var(--p, 0) * -26deg));
 }
 
+.manifest-ghost-d {
+  left: 2%;
+  bottom: 5%;
+  width: clamp(82px, 12vw, 175px);
+  opacity: 0.17;
+  transform: translate3d(calc(var(--p, 0) * 4vw), calc(var(--p, 0) * -14vh), 0)
+    rotate(calc(var(--p, 0) * 12deg));
+}
+
+.manifest-ghost-e {
+  right: 2%;
+  top: 45%;
+  width: clamp(64px, 9vw, 130px);
+  opacity: 0.14;
+  transform: translate3d(calc(var(--p, 0) * -4vw), calc(var(--p, 0) * 9vh), 0)
+    rotate(calc(var(--p, 0) * -18deg));
+}
+
 .manifest-head {
   position: relative;
   z-index: 2;
@@ -1074,30 +1092,6 @@ html[data-effects="off"] .hero-apple {
   text-shadow: 0 0 42px rgba(201, 162, 39, 0.18);
 }
 
-.manifest-foot {
-  position: absolute;
-  left: clamp(1.5rem, 5vw, 4rem);
-  right: clamp(1.5rem, 5vw, 4rem);
-  bottom: clamp(1.2rem, 4vh, 2.4rem);
-  z-index: 4;
-  display: flex;
-  align-items: flex-end;
-  justify-content: flex-end;
-  gap: 1rem;
-}
-
-.manifest-hint {
-  margin: 0;
-  max-width: 22rem;
-  text-align: right;
-  font-family: var(--font-mono);
-  font-size: 0.5rem;
-  line-height: 1.7;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--color-steel);
-}
-
 html[data-effects="off"] .manifest-scroll,
 .manifest-scroll[data-static="true"] {
   height: auto !important;
@@ -1145,18 +1139,6 @@ html[data-effects="off"] .manifest-line,
   pointer-events: auto !important;
 }
 
-html[data-effects="off"] .manifest-foot,
-.manifest-scroll[data-static="true"] .manifest-foot {
-  position: static;
-  margin-top: 3rem;
-  padding: 0 clamp(1.5rem, 6vw, 5rem);
-}
-
-html[data-effects="off"] .manifest-hint,
-.manifest-scroll[data-static="true"] .manifest-hint {
-  display: none;
-}
-
 @media (max-width: 640px) {
   .manifest-line {
     align-items: center;
@@ -1166,7 +1148,13 @@ html[data-effects="off"] .manifest-hint,
   .manifest-line-text {
     font-size: clamp(1.25rem, 6.4vw, 1.75rem);
   }
-  .manifest-hint {
+  .manifest-ghost-d {
+    left: 1%;
+    bottom: 3%;
+    width: 92px;
+    opacity: 0.14;
+  }
+  .manifest-ghost-e {
     display: none;
   }
 }
@@ -1181,8 +1169,7 @@ html[data-effects="off"] .manifest-hint,
     padding: 5rem 0 4rem;
     perspective: none;
   }
-  .manifest-depth,
-  .manifest-hint {
+  .manifest-depth {
     display: none;
   }
   .manifest-head {
@@ -1203,11 +1190,6 @@ html[data-effects="off"] .manifest-hint,
     opacity: 1 !important;
     transform: none !important;
     filter: none !important;
-  }
-  .manifest-foot {
-    position: static;
-    margin-top: 3rem;
-    padding: 0 1.5rem;
   }
 }
 
