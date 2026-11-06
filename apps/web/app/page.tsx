@@ -171,6 +171,7 @@ export default function HomePage() {
           </a>
 
           <div className="ml-auto flex flex-wrap gap-4 font-mono text-[0.55rem] uppercase tracking-[0.2em] text-steel">
+            <TLink href="/settings">Настройки</TLink>
             <TLink href="/legal/rules">Правила</TLink>
             <TLink href="/legal/privacy">Приватность</TLink>
             <TLink href="/legal/terms">Оферта</TLink>

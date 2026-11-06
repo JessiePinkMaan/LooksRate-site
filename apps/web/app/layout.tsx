@@ -13,8 +13,6 @@ import "@fontsource/cormorant-garamond/400-italic.css";
 
 import {
   EffectsProvider,
-  EffectsToggle,
-  SoundToggle,
 } from "@loxrate/ui";
 
 import { SmoothScroll } from "@/components/motion/SmoothScroll";
@@ -106,10 +104,6 @@ export default function RootLayout({
             <div className="relative z-10">
               <SiteHeader />
               {children}
-            </div>
-            <div className="fixed bottom-4 left-4 z-50 flex flex-wrap gap-2">
-              <EffectsToggle />
-              <SoundToggle />
             </div>
           </TransitionProvider>
         </SmoothScroll>
