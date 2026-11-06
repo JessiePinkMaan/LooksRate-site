@@ -508,7 +508,7 @@ async function prepareHands(): Promise<void> {
   await saveHand(right, "hand-b.webp");
 }
 
-const HOVER_SOUND = "4_-no_yy-god-pre_raschenie-iz-plohih-_-horoshih.mp3";
+const HOVER_SOUND = "linia_raw_style (1).mp3";
 
 /** Звук наведения на яблоко. Исходник владельца копируется как есть. */
 function prepareHoverSound(): void {

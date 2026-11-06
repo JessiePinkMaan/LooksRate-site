@@ -1071,38 +1071,8 @@ html[data-effects="off"] .hero-apple {
   z-index: 4;
   display: flex;
   align-items: flex-end;
-  justify-content: space-between;
+  justify-content: flex-end;
   gap: 1rem;
-}
-
-.manifest-progress {
-  display: flex;
-  align-items: center;
-  gap: 0.8rem;
-}
-
-.manifest-progress-track {
-  display: block;
-  width: 2px;
-  height: 2.8rem;
-  background: rgba(28, 28, 32, 0.9);
-  overflow: hidden;
-}
-
-.manifest-progress-fill {
-  display: block;
-  width: 100%;
-  height: 100%;
-  transform: scaleY(0.02);
-  transform-origin: top;
-  background: linear-gradient(to bottom, var(--color-gold-apple), var(--color-blood));
-}
-
-.manifest-progress-count {
-  font-family: var(--font-mono);
-  font-size: 0.55rem;
-  letter-spacing: 0.26em;
-  color: var(--color-gold-apple);
 }
 
 .manifest-hint {
@@ -1171,8 +1141,6 @@ html[data-effects="off"] .manifest-foot,
   padding: 0 clamp(1.5rem, 6vw, 5rem);
 }
 
-html[data-effects="off"] .manifest-progress,
-.manifest-scroll[data-static="true"] .manifest-progress,
 html[data-effects="off"] .manifest-hint,
 .manifest-scroll[data-static="true"] .manifest-hint {
   display: none;
@@ -1203,7 +1171,6 @@ html[data-effects="off"] .manifest-hint,
     perspective: none;
   }
   .manifest-depth,
-  .manifest-progress,
   .manifest-hint {
     display: none;
   }

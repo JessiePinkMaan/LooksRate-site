@@ -30,10 +30,6 @@ export default function FoundersPage() {
           <h1 className="mt-4 font-heading text-5xl uppercase leading-[0.9] sm:text-7xl">
             Основатели
           </h1>
-          <p className="mt-4 max-w-2xl text-sm leading-relaxed text-steel">
-            Двое в свете лампы. Листай - цитаты появляются по одной; клик по
-            фигуре открывает досье.
-          </p>
         </div>
       </div>
       <FoundersScene />

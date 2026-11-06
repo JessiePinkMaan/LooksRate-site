@@ -23,7 +23,6 @@ function clamp(value: number, min = 0, max = 1): number {
 export function ManifestScroll() {
   const sectionRef = useRef<HTMLElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
-  const currentRef = useRef<HTMLSpanElement>(null);
   const lineRefs = useRef<Array<HTMLLIElement | null>>([]);
   const { effects } = usePreferences();
   const [animated, setAnimated] = useState(true);
@@ -73,14 +72,6 @@ export function ManifestScroll() {
         line.dataset.active = Math.abs(distance) < 0.5 ? "true" : "false";
         line.style.pointerEvents = Math.abs(distance) < 0.5 ? "auto" : "none";
       });
-
-      const visibleIndex = Math.round(position) + 1;
-      if (currentRef.current) {
-        currentRef.current.textContent = String(visibleIndex).padStart(2, "0");
-      }
-
-      const fill = stage.querySelector<HTMLElement>("[data-progress-fill]");
-      if (fill) fill.style.transform = `scaleY(${Math.max(0.02, progress)})`;
     };
 
     const onScroll = (): void => {
@@ -170,18 +161,6 @@ export function ManifestScroll() {
         </ol>
 
         <div className="manifest-foot">
-          <div className="manifest-progress" aria-hidden>
-            <span className="manifest-progress-track">
-              <span
-                className="manifest-progress-fill"
-                data-progress-fill
-              />
-            </span>
-            <span className="manifest-progress-count">
-              <span ref={currentRef}>01</span>
-              <span className="text-steel/60"> / {String(TOTAL).padStart(2, "0")}</span>
-            </span>
-          </div>
           <p className="manifest-hint">{manifest.hint}</p>
         </div>
       </div>
