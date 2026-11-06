@@ -41,3 +41,23 @@ jobs:
 
       - name: Build
         run: pnpm build
+
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Docker buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build production image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: apps/web/Dockerfile
+          build-args: |
+            SITE_URL=https://example.com
+          push: false
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

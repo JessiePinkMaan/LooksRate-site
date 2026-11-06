@@ -7,6 +7,7 @@ import { getSessionUser } from "@/lib/auth";
 
 export const metadata: Metadata = {
   title: "Вход",
+  robots: { index: false, follow: false },
 };
 
 export default async function LoginPage() {

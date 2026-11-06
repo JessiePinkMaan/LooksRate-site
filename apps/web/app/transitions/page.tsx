@@ -9,6 +9,7 @@ import { ScrollDemos } from "./ScrollDemos";
 
 export const metadata: Metadata = {
   title: "Движок движения",
+  robots: { index: false, follow: false },
 };
 
 function SectionTitle({ n, title }: { n: string; title: string }) {

@@ -46,11 +46,25 @@ describe("parseEnv", () => {
     ).toThrow(/production/);
   });
 
+  it("требует HTTPS SITE_URL в проде", () => {
+    expect(() =>
+      parseEnv({
+        ...baseEnv,
+        NODE_ENV: "production",
+        SITE_URL: "http://loxrate.example",
+        DEV_LOGIN: "false",
+        TELEGRAM_MODE: "live",
+        PAYMENT_PROVIDERS: "stars",
+      }),
+    ).toThrow(/https/);
+  });
+
   it("не пропускает fake-платежи в проде", () => {
     expect(() =>
       parseEnv({
         ...baseEnv,
         NODE_ENV: "production",
+        SITE_URL: "https://loxrate.example",
         DEV_LOGIN: "false",
         TELEGRAM_MODE: "live",
         PAYMENT_PROVIDERS: "stars,fake",

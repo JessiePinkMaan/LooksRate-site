@@ -1,6 +1,7 @@
 import achievements from "../../../content/ru/achievements.json";
 import codex from "../../../content/ru/codex.json";
 import entry from "../../../content/ru/entry.json";
+import errors from "../../../content/ru/errors.json";
 import faq from "../../../content/ru/faq.json";
 import feed from "../../../content/ru/telegram-feed.fixture.json";
 import founders from "../../../content/ru/founders.json";
@@ -23,6 +24,7 @@ export {
   achievements,
   codex,
   entry,
+  errors,
   faq,
   feed,
   founders,

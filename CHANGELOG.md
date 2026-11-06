@@ -4,6 +4,25 @@
 
 ## [Unreleased]
 
+### Подготовка к деплою
+- Добавлен `.dockerignore`: секреты, `node_modules`, `.next`, `storage`,
+  `qa`, `assets` и локальные дампы больше не попадают в Docker-контекст.
+- Production-образ: `SITE_URL` передаётся build-arg (правильные metadata,
+  robots и sitemap), `NEXT_TELEMETRY_DISABLED`, `HOSTNAME`, healthcheck,
+  предсозданный `/app/storage/videos`.
+- `docker-compose.prod.yml`: named volume `videostorage`, bind `127.0.0.1`,
+  ротация json-логов, optional Caddy-профиль, MinIO вынесен в профиль
+  `storage`, placeholder-worker убран из прод-стека, `migrate`/`seed`
+  ждут healthy PostgreSQL.
+- Добавлены `.env.production.example`, `deploy/Caddyfile`, расширен
+  `docs/DEPLOY.md` (чек-лист, TLS, бэкапы, обновление, откат).
+- Безопасность: security headers (CSP frame-ancestors, HSTS, nosniff,
+  frame DENY, Permissions-Policy), noindex для служебных страниц,
+  rate limit логина/регистрации, выравнивание времени ответа для
+  несуществующих логинов, стриминг загрузки видео вместо буфера в RAM.
+- Добавлены `/api/health/ready`, `error.tsx`, `global-error.tsx`,
+  `not-found.tsx`; `db:backup` понимает `COMPOSE_FILE` для prod.
+
 ### Правки после третьего просмотра
 - Финал интро: яблоко, аура и зерно гаснут 420 мс, а hero-яблоко и
   вторичный контент в это же время плавно проявляются. Резкого пустого

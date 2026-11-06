@@ -1,5 +1,8 @@
-import { mkdir, writeFile } from "node:fs/promises";
+import { createWriteStream } from "node:fs";
+import { mkdir, stat, unlink } from "node:fs/promises";
 import { extname } from "node:path";
+import { Readable } from "node:stream";
+import { pipeline } from "node:stream/promises";
 
 import { NextResponse } from "next/server";
 
@@ -52,8 +55,26 @@ export async function POST(
     return NextResponse.json({ error: "bad path" }, { status: 400 });
   }
 
-  const buffer = Buffer.from(await file.arrayBuffer());
-  await writeFile(filePath, buffer);
+  try {
+    await pipeline(
+      Readable.fromWeb(
+        file.stream() as unknown as import("node:stream/web").ReadableStream,
+      ),
+      createWriteStream(filePath),
+    );
+  } catch {
+    await unlink(filePath).catch(() => undefined);
+    return NextResponse.json(
+      { error: "write failed" },
+      { status: 500 },
+    );
+  }
+
+  const written = await stat(filePath);
+  if (written.size !== file.size) {
+    await unlink(filePath).catch(() => undefined);
+    return NextResponse.json({ error: "size mismatch" }, { status: 500 });
+  }
 
   await prisma.videoAsset.deleteMany({
     where: { videoId: id, kind: "ORIGINAL" },
@@ -63,7 +84,7 @@ export async function POST(
       videoId: id,
       kind: "ORIGINAL",
       storageKey,
-      size: buffer.byteLength,
+      size: written.size,
     },
   });
   await prisma.video.update({
@@ -77,7 +98,7 @@ export async function POST(
       action: "video.upload",
       entityType: "video",
       entityId: id,
-      afterJson: { storageKey, size: buffer.byteLength },
+      afterJson: { storageKey, size: written.size },
     },
   });
 

@@ -24,6 +24,46 @@ const nextConfig: NextConfig = {
       { source: "/_transitions", destination: "/transitions" },
     ];
   },
+  async headers() {
+    const securityHeaders = [
+      { key: "X-Content-Type-Options", value: "nosniff" },
+      { key: "X-Frame-Options", value: "DENY" },
+      {
+        key: "Referrer-Policy",
+        value: "strict-origin-when-cross-origin",
+      },
+      {
+        key: "Permissions-Policy",
+        value: "camera=(), microphone=(), geolocation=(), payment=(), usb=()",
+      },
+      {
+        key: "Content-Security-Policy",
+        value:
+          "frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'",
+      },
+      { key: "X-Permitted-Cross-Domain-Policies", value: "none" },
+    ];
+
+    if (process.env.NODE_ENV === "production") {
+      securityHeaders.push({
+        key: "Strict-Transport-Security",
+        value: "max-age=31536000; includeSubDomains",
+      });
+    }
+
+    const noindex = [{ key: "X-Robots-Tag", value: "noindex, nofollow" }];
+
+    return [
+      { source: "/:path*", headers: securityHeaders },
+      { source: "/admin/:path*", headers: noindex },
+      { source: "/dev/:path*", headers: noindex },
+      { source: "/design", headers: noindex },
+      { source: "/transitions", headers: noindex },
+      { source: "/me", headers: noindex },
+      { source: "/login", headers: noindex },
+      { source: "/settings", headers: noindex },
+    ];
+  },
 };
 
 export default nextConfig;

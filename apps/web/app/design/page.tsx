@@ -7,6 +7,7 @@ import { HoldDemo } from "./HoldDemo";
 
 export const metadata: Metadata = {
   title: "Стенд дизайн-системы",
+  robots: { index: false, follow: false },
 };
 
 const palette = [

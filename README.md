@@ -47,8 +47,14 @@ pnpm dev
 | `pnpm e2e` | Playwright |
 | `pnpm docker:up` / `docker:down` | postgres, redis, minio |
 | `pnpm db:migrate` / `db:seed` / `db:reset` | миграции, сиды, сброс |
+| `pnpm db:backup` | дамп PostgreSQL (`COMPOSE_FILE` для prod) |
 | `pnpm assets:generate` | процедурные SVG-заглушки |
 | `pnpm qa:shots` / `qa:a11y` / `qa:perf` | скриншоты, axe, Lighthouse |
+
+## Деплой
+
+Production-сборка, Docker, миграции, TLS, бэкапы и чек-лист:
+[`docs/DEPLOY.md`](docs/DEPLOY.md). Шаблон окружения: `.env.production.example`.
 
 ## Статус
 

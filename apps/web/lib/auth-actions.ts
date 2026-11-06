@@ -1,13 +1,16 @@
 "use server";
 
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 
 import { Prisma } from "@loxrate/db";
 
 import { createSession, destroySession } from "./auth";
+import { entry } from "./content";
 import { prisma } from "./db";
 import { hashPassword, verifyPassword } from "./password";
+import { checkRateLimit, clearRateLimit } from "./rate-limit";
 
 export type AuthState = {
   error?: string;
@@ -30,6 +33,23 @@ const credentialsSchema = z.object({
     .max(128, "Пароль - максимум 128 символов"),
 });
 
+const LOGIN_WINDOW_MS = 10 * 60 * 1000;
+const REGISTER_WINDOW_MS = 60 * 60 * 1000;
+
+/** Фиктивный scrypt-хеш: выравнивает время ответа для несуществующих логинов. */
+const DUMMY_PASSWORD_HASH =
+  "scrypt$0123456789abcdef0123456789abcdef$9564d5a180593f4f60ac8b2db7e8966b37a1d6fc22b396d69f4f71972c1820f80cec190209c19b5603fae554eee5a6318a4cadcbc5b3892fd40e2d8df24c3997";
+
+async function clientIp(): Promise<string> {
+  const store = await headers();
+  const forwarded = store.get("x-forwarded-for")?.split(",")[0]?.trim();
+  return forwarded || store.get("x-real-ip") || "local";
+}
+
+function rateLimitError(): AuthState {
+  return { error: entry.form.errorRateLimit };
+}
+
 export async function registerAction(
   _previous: AuthState,
   formData: FormData,
@@ -47,6 +67,11 @@ export async function registerAction(
 
   if (formData.get("age") !== "on") {
     return { error: "Подтверди, что тебе есть 18." };
+  }
+
+  const ip = await clientIp();
+  if (!checkRateLimit(`register:${ip}`, 5, REGISTER_WINDOW_MS).allowed) {
+    return rateLimitError();
   }
 
   const username = parsed.data.username.toLowerCase();
@@ -95,9 +120,23 @@ export async function loginAction(
   }
 
   const username = parsed.data.username.toLowerCase();
+  const ip = await clientIp();
+  const accountKey = `login:account:${username}`;
+
+  const accountLimit = checkRateLimit(
+    accountKey,
+    6,
+    LOGIN_WINDOW_MS,
+  );
+  const ipLimit = checkRateLimit(`login:ip:${ip}`, 25, LOGIN_WINDOW_MS);
+  if (!accountLimit.allowed || !ipLimit.allowed) {
+    return rateLimitError();
+  }
+
   const user = await prisma.user.findFirst({ where: { username } });
 
   if (!user?.passwordHash) {
+    verifyPassword(parsed.data.password, DUMMY_PASSWORD_HASH);
     return { error: "Неверный логин или пароль." };
   }
 
@@ -115,6 +154,7 @@ export async function loginAction(
   });
   await createSession(user.id);
 
+  clearRateLimit(accountKey);
   return { success: true };
 }
 

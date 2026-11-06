@@ -1,0 +1,32 @@
+# Keep the Docker context small and never bake secrets or local data into images.
+.git
+.github
+.gitignore
+.turbo
+node_modules
+**/node_modules
+.next
+**/.next
+apps/web/tsconfig.tsbuildinfo
+**/*.tsbuildinfo
+
+# Secrets and local environment
+.env
+.env.*
+!.env.example
+
+# Local data that must live in volumes, not images
+storage
+backups
+qa
+assets
+
+# Development-only docs/stand-ins
+docs
+TZ_LOXRATE_SITE.md
+CLAUDE.md
+README.md
+test-results
+playwright-report
+coverage
+*.log

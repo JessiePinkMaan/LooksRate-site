@@ -1,9 +1,15 @@
+import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
 import { TLink } from "@/components/motion/TLink";
 import { requireStaff } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+  title: "Админка",
+  robots: { index: false, follow: false },
+};
 
 export default async function AdminLayout({
   children,

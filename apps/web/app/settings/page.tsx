@@ -4,6 +4,7 @@ import { EffectsToggle, SoundToggle } from "@loxrate/ui";
 
 export const metadata: Metadata = {
   title: "Настройки",
+  robots: { index: false, follow: false },
 };
 
 export default function SettingsPage() {

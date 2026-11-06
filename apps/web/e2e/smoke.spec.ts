@@ -45,6 +45,9 @@ test("health и SEO-эндпоинты", async ({ request }) => {
   const health = await request.get("/api/health");
   expect(health.ok()).toBeTruthy();
 
+  const ready = await request.get("/api/health/ready");
+  expect(ready.ok()).toBeTruthy();
+
   const robots = await request.get("/robots.txt");
   expect(await robots.text()).toContain("Sitemap");
 

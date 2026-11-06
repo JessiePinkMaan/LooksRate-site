@@ -16,6 +16,7 @@ export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Профиль",
+  robots: { index: false, follow: false },
 };
 
 const activityCopy = profile.activity;

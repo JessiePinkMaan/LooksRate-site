@@ -70,6 +70,9 @@ function assertSafeForProduction(env: Env): void {
   if (env.DEV_LOGIN) {
     throw new EnvValidationError("DEV_LOGIN=true запрещён при NODE_ENV=production.");
   }
+  if (!env.SITE_URL.startsWith("https://")) {
+    throw new EnvValidationError("SITE_URL должен начинаться с https:// в production.");
+  }
   if (env.TELEGRAM_MODE === "fake") {
     throw new EnvValidationError("TELEGRAM_MODE=fake запрещён при NODE_ENV=production.");
   }
